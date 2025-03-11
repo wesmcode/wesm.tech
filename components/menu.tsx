@@ -82,7 +82,11 @@ export default function Menu({ onSelect }: MenuProps) {
             }}
           >
             {selectedIndex === index ? "> " : "  "}
-            {option.label}
+            {selectedIndex === index ? (
+              <span className="font-bold">{option.label}</span>
+            ) : (
+              option.label
+            )}
           </div>
         ))}
       </div>

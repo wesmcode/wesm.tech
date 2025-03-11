@@ -96,7 +96,7 @@ export default function Terminal() {
 
       {/* Terminal Content */}
       <div ref={terminalContentRef} className="bg-blue-900 text-white p-4 h-full overflow-y-auto font-mono text-sm">
-        <AsciiTitle />
+        <AsciiTitle selectedOption={activeSection} />
         <p className="mb-4">Welcome to Wesley Melo interactive website terminal</p>
         <p className="mb-6 text-gray-400">{">"} made by wesm.tech - still mostly human (last checked) | @2025</p>
 
