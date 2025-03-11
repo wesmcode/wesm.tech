@@ -148,7 +148,7 @@ Note: This memoir is a work of satire and part of creative personal writing proj
         </div>
       )}
 
-      {!isOpen && !isConnecting && <p className="text-yellow-300">(press r to return to the menu)</p>}
+      {!isOpen && !isConnecting && <p className="text-yellow-300">(press r to return to the menu, press enter to skip animations)</p>}
 
       <div className="sr-only">
         <button onClick={onReturn}>Return to menu</button>

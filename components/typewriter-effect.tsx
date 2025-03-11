@@ -29,6 +29,23 @@ export default function TypewriterEffect({ text, speed = 20, onComplete }: Props
     }
   }, [currentIndex, speed, text, onComplete])
 
+  // Add effect to handle Enter key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !isComplete) {
+        setDisplayedText(text)
+        setCurrentIndex(text.length)
+        setIsComplete(true)
+        if (onComplete) {
+          onComplete()
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [text, isComplete, onComplete])
+
   return (
     <div className="whitespace-pre-line">
       {displayedText}
