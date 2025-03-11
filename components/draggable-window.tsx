@@ -15,6 +15,12 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
   const [isResizing, setIsResizing] = useState(false)
   const [startPos, setStartPos] = useState({ x: 0, y: 0 })
   const [startSize, setStartSize] = useState({ width: 800, height: 600 })
+  const [isAtBoundary, setIsAtBoundary] = useState({
+    top: false,
+    right: false,
+    bottom: false,
+    left: false
+  })
 
   const windowRef = useRef<HTMLDivElement>(null)
 
@@ -43,9 +49,51 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
         e.preventDefault()
         const dx = e.clientX - startPos.x
         const dy = e.clientY - startPos.y
+        
+        // Calculate new position
+        let newX = position.x + dx
+        let newY = position.y + dy
+        
+        // Add constraints to keep window within viewport
+        const boundaries = {
+          top: false,
+          right: false,
+          bottom: false,
+          left: false
+        }
+        
+        if (typeof window !== "undefined") {
+          // Check left boundary
+          if (newX <= 0) {
+            newX = 0
+            boundaries.left = true
+          }
+          
+          // Check right boundary
+          if (newX >= window.innerWidth - size.width) {
+            newX = window.innerWidth - size.width
+            boundaries.right = true
+          }
+          
+          // Check top boundary
+          if (newY <= 0) {
+            newY = 0
+            boundaries.top = true
+          }
+          
+          // Check bottom boundary
+          if (newY >= window.innerHeight - size.height) {
+            newY = window.innerHeight - size.height
+            boundaries.bottom = true
+          }
+        }
+        
+        // Update boundary state
+        setIsAtBoundary(boundaries)
+        
         setPosition({
-          x: position.x + dx,
-          y: position.y + dy,
+          x: newX,
+          y: newY,
         })
         setStartPos({ x: e.clientX, y: e.clientY })
       }
@@ -54,8 +102,35 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
         e.preventDefault()
         const dx = e.clientX - startPos.x
         const dy = e.clientY - startPos.y
-        const newWidth = Math.max(400, startSize.width + dx)
-        const newHeight = Math.max(300, startSize.height + dy)
+        
+        // Calculate new size
+        let newWidth = Math.max(400, startSize.width + dx)
+        let newHeight = Math.max(300, startSize.height + dy)
+        
+        // Add constraints to keep window within viewport
+        const boundaries = { ...isAtBoundary };
+        
+        if (typeof window !== "undefined") {
+          // Check right boundary when resizing
+          if (position.x + newWidth >= window.innerWidth) {
+            newWidth = window.innerWidth - position.x
+            boundaries.right = true
+          } else {
+            boundaries.right = false
+          }
+          
+          // Check bottom boundary when resizing
+          if (position.y + newHeight >= window.innerHeight) {
+            newHeight = window.innerHeight - position.y
+            boundaries.bottom = true
+          } else {
+            boundaries.bottom = false
+          }
+        }
+        
+        // Update boundary state
+        setIsAtBoundary(boundaries)
+        
         setSize({
           width: newWidth,
           height: newHeight,
@@ -98,30 +173,65 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
     const handleResize = () => {
       if (typeof window !== "undefined") {
         const isMobile = window.innerWidth < 768
+        const boundaries = { ...isAtBoundary };
+        let newX = position.x;
+        let newY = position.y;
+        let newWidth = size.width;
+        let newHeight = size.height;
 
         // On mobile, make window fill most of the screen
         if (isMobile) {
-          const newWidth = Math.min(window.innerWidth - 32, 400)
-          const newHeight = Math.min(window.innerHeight - 100, 500)
-
-          setSize({ width: newWidth, height: newHeight })
+          newWidth = Math.min(window.innerWidth - 32, 400)
+          newHeight = Math.min(window.innerHeight - 100, 500)
 
           // Center the window
-          const x = (window.innerWidth - newWidth) / 2
-          const y = (window.innerHeight - newHeight) / 4
-          setPosition({ x, y })
+          newX = (window.innerWidth - newWidth) / 2
+          newY = (window.innerHeight - newHeight) / 4
+        } else {
+          // For desktop, ensure window stays within viewport after resize
+          if (newX + newWidth > window.innerWidth) {
+            if (newWidth > window.innerWidth) {
+              newWidth = window.innerWidth;
+              newX = 0;
+              boundaries.left = true;
+              boundaries.right = true;
+            } else {
+              newX = window.innerWidth - newWidth;
+              boundaries.right = true;
+            }
+          }
+
+          if (newY + newHeight > window.innerHeight) {
+            if (newHeight > window.innerHeight) {
+              newHeight = window.innerHeight;
+              newY = 0;
+              boundaries.top = true;
+              boundaries.bottom = true;
+            } else {
+              newY = window.innerHeight - newHeight;
+              boundaries.bottom = true;
+            }
+          }
         }
+
+        setPosition({ x: newX, y: newY });
+        setSize({ width: newWidth, height: newHeight });
+        setIsAtBoundary(boundaries);
       }
     }
 
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
-  }, [])
+  }, [position, size, isAtBoundary])
 
   return (
     <div
       ref={windowRef}
-      className="absolute rounded-lg overflow-hidden shadow-2xl border border-gray-200"
+      className={`absolute rounded-lg overflow-hidden shadow-2xl border ${
+        isAtBoundary.top || isAtBoundary.right || isAtBoundary.bottom || isAtBoundary.left
+          ? 'border-red-500 border-2'
+          : 'border-gray-200'
+      }`}
       style={{
         left: position.x,
         top: position.y,
@@ -132,11 +242,13 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
     >
       {/* Header - draggable area */}
       <div className="bg-gray-200 px-4 py-2 flex items-center cursor-move" onMouseDown={handleDragStart}>
-        {children[0]}
+        {Array.isArray(children) ? children[0] : null}
       </div>
 
       {/* Main content */}
-      <div className="h-[calc(100%-40px)] overflow-hidden">{children[1]}</div>
+      <div className="h-[calc(100%-40px)] overflow-hidden">
+        {Array.isArray(children) ? children[1] : children}
+      </div>
 
       {/* Resize handle */}
       <div
