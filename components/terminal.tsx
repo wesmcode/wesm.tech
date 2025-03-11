@@ -16,6 +16,7 @@ type Section = "menu" | "profile" | "experience" | "skills" | "contact" | "memoi
 export default function Terminal() {
   const [activeSection, setActiveSection] = useState<Section>("menu")
   const [exitCounter, setExitCounter] = useState<number | null>(null)
+  const [isFullscreen, setIsFullscreen] = useState(false)
   const terminalRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
   const terminalContentRef = useRef<HTMLDivElement>(null)
@@ -72,14 +73,23 @@ export default function Terminal() {
     setActiveSection("menu")
   }
 
+  const handleOpenLinkedIn = () => {
+    window.open("https://www.linkedin.com/in/wesmelo", "_blank")
+  }
+
+  const handleToggleFullscreen = () => {
+    setIsFullscreen(!isFullscreen)
+  }
+
   return (
-    <DraggableWindow>
+    <DraggableWindow isFullscreen={isFullscreen}>
       {/* Terminal Header */}
       <div className="w-full flex items-center">
         <div className="flex space-x-2">
           <button
             className="w-3 h-3 rounded-full bg-red-500 hover:bg-red-600 transition-colors"
-            aria-label="Close"
+            aria-label="Open LinkedIn"
+            onClick={handleOpenLinkedIn}
           ></button>
           <button
             className="w-3 h-3 rounded-full bg-yellow-500 hover:bg-yellow-600 transition-colors"
@@ -87,7 +97,8 @@ export default function Terminal() {
           ></button>
           <button
             className="w-3 h-3 rounded-full bg-green-500 hover:bg-green-600 transition-colors"
-            aria-label="Maximize"
+            aria-label="Toggle Fullscreen"
+            onClick={handleToggleFullscreen}
           ></button>
         </div>
         <div className="flex-1 text-center text-sm text-gray-600 font-medium">wesm.tech</div>

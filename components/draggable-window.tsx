@@ -6,15 +6,17 @@ import { useState, useRef, type ReactNode, useEffect } from "react"
 
 interface DraggableWindowProps {
   children: ReactNode
+  isFullscreen?: boolean
 }
 
-export default function DraggableWindow({ children }: DraggableWindowProps) {
+export default function DraggableWindow({ children, isFullscreen = false }: DraggableWindowProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [size, setSize] = useState({ width: 800, height: 600 })
   const [isResizing, setIsResizing] = useState(false)
   const [startPos, setStartPos] = useState({ x: 0, y: 0 })
   const [startSize, setStartSize] = useState({ width: 800, height: 600 })
+  const [previousState, setPreviousState] = useState<{ position: { x: number, y: number }, size: { width: number, height: number } } | null>(null)
   const [isAtBoundary, setIsAtBoundary] = useState({
     top: false,
     right: false,
@@ -23,6 +25,17 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
   })
 
   const windowRef = useRef<HTMLDivElement>(null)
+  const latestStateRef = useRef({ position, size })
+  const boundaryRef = useRef(isAtBoundary)
+  
+  // Keep the refs updated with the latest state
+  useEffect(() => {
+    latestStateRef.current = { position, size }
+  }, [position, size])
+  
+  useEffect(() => {
+    boundaryRef.current = isAtBoundary
+  }, [isAtBoundary])
 
   // Center the window and set responsive size on initial render
   useEffect(() => {
@@ -41,6 +54,33 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
       setStartSize({ width: newWidth, height: newHeight })
     }
   }, [])
+
+  // Handle fullscreen toggle
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      if (isFullscreen) {
+        // Save current position and size before going fullscreen
+        if (!previousState) {
+          setPreviousState({
+            position: { ...latestStateRef.current.position },
+            size: { ...latestStateRef.current.size }
+          })
+        }
+        
+        // Set to fullscreen (respecting screen size)
+        setPosition({ x: 0, y: 0 })
+        setSize({ 
+          width: window.innerWidth,
+          height: window.innerHeight
+        })
+      } else if (previousState) {
+        // Restore previous position and size
+        setPosition(previousState.position)
+        setSize(previousState.size)
+        setPreviousState(null)
+      }
+    }
+  }, [isFullscreen, previousState])
 
   // Handle mouse movement for dragging and resizing
   useEffect(() => {
@@ -108,7 +148,7 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
         let newHeight = Math.max(300, startSize.height + dy)
         
         // Add constraints to keep window within viewport
-        const boundaries = { ...isAtBoundary };
+        const boundaries = { ...boundaryRef.current };
         
         if (typeof window !== "undefined") {
           // Check right boundary when resizing
@@ -171,13 +211,15 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      if (typeof window !== "undefined") {
+      if (typeof window !== "undefined" && !isFullscreen) {
         const isMobile = window.innerWidth < 768
-        const boundaries = { ...isAtBoundary };
-        let newX = position.x;
-        let newY = position.y;
-        let newWidth = size.width;
-        let newHeight = size.height;
+        const currentPosition = latestStateRef.current.position;
+        const currentSize = latestStateRef.current.size;
+        const boundaries = { ...boundaryRef.current };
+        let newX = currentPosition.x;
+        let newY = currentPosition.y;
+        let newWidth = currentSize.width;
+        let newHeight = currentSize.height;
 
         // On mobile, make window fill most of the screen
         if (isMobile) {
@@ -222,7 +264,7 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
 
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
-  }, [position, size, isAtBoundary])
+  }, [isFullscreen])
 
   return (
     <div
@@ -241,7 +283,10 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
       }}
     >
       {/* Header - draggable area */}
-      <div className="bg-gray-200 px-4 py-2 flex items-center cursor-move" onMouseDown={handleDragStart}>
+      <div 
+        className="bg-gray-200 px-4 py-2 flex items-center cursor-move" 
+        onMouseDown={isFullscreen ? undefined : handleDragStart}
+      >
         {Array.isArray(children) ? children[0] : null}
       </div>
 
@@ -250,26 +295,28 @@ export default function DraggableWindow({ children }: DraggableWindowProps) {
         {Array.isArray(children) ? children[1] : children}
       </div>
 
-      {/* Resize handle */}
-      <div
-        className="absolute bottom-0 right-0 w-6 h-6 cursor-nwse-resize flex items-center justify-center"
-        onMouseDown={handleResizeStart}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="12"
-          height="12"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          className="text-gray-500"
+      {/* Resize handle - hide when fullscreen */}
+      {!isFullscreen && (
+        <div
+          className="absolute bottom-0 right-0 w-6 h-6 cursor-nwse-resize flex items-center justify-center"
+          onMouseDown={handleResizeStart}
         >
-          <polyline points="22 12 18 12 18 8"></polyline>
-          <polyline points="12 22 12 18 8 18"></polyline>
-          <path d="M12 12L22 22"></path>
-        </svg>
-      </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="12"
+            height="12"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-gray-500"
+          >
+            <polyline points="22 12 18 12 18 8"></polyline>
+            <polyline points="12 22 12 18 8 18"></polyline>
+            <path d="M12 12L22 22"></path>
+          </svg>
+        </div>
+      )}
     </div>
   )
 }
