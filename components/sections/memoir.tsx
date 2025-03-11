@@ -140,7 +140,6 @@ Note: This memoir is a work of satire and part of creative personal writing proj
               <HumanTypewriter
                 text={memoirText}
                 speed={30}
-                mistakeProbability={0.03}
                 pauseProbability={0.1}
                 scrollContainer={contentRef}
               />
