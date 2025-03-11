@@ -40,29 +40,45 @@ export default function AvailableSkills({ onReturn }: Props) {
     }
   }
 
-  const content = `[x] The tools and capabilities I've developed throughout my career allow me to navigate complex digital landscapes and create solutions that balance business needs with human experiences.
+  const content = `$ cat profile.txt
+┌────────────────────────────────────────────────────────────┐
+│ USER PROFILE                                   STATUS: ACTIVE │
+└────────────────────────────────────────────────────────────┘
 
-human languages
-• english (Fluent - C2)
-• portuguese (Native)
+[✓] The tools and capabilities I've developed throughout my career 
+    allow me to navigate complex digital landscapes and create 
+    solutions that balance business needs with human experiences.
 
-powered with
+$ language --list
+-------------------------------------------------------------------------
+  • english    [##########] Fluent - C2
+  • portuguese [##########] Native
+
+$ skills --list
+-------------------------------------------------------------------------
+POWERED WITH:
 + Turning Complex Problems into Simple
 + Leading Without Micromanaging
 + Building Digital Experiences People
 
-works with
+WORKS WITH:
 + translating tech-speak into human
 
-creative approach
+$ cat approach.conf
+-------------------------------------------------------------------------
+CREATIVE APPROACH:
 + elaborate empathy and listening before building
 + when building consider long-term impact
 + testing ideas in the real world
 
-current FOMO subjects
+$ cat interests.log | grep "FOMO" -A3
+-------------------------------------------------------------------------
+CURRENT FOMO SUBJECTS:
 + AI that actually solves people stress and overwork
 + making technology disappear into the background
-+ sustainable growth strategies`
++ sustainable growth strategies
+
+`
 
   return (
     <div ref={sectionRef}>

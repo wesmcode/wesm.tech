@@ -40,19 +40,33 @@ export default function ContactInfo({ onReturn }: Props) {
     }
   }
 
-  const content = `WESLEY MELO
-- last location: Brazil 
-- status: online (Remote)
-- availability: relocation open
+  const content = `$ whoami
+WESLEY MELO
 
+$ system --status
+┌────────────────────────────────────────────────────────────┐
+│ USER STATUS                                                │
+├────────────────────────────────────────────────────────────┤
+│ last location: Brazil                                      │
+│ status: online (Remote)                                    │
+│ availability: relocation open                              │
+└────────────────────────────────────────────────────────────┘
 
+$ cat contact.conf
+-------------------------------------------------------------------------
 [x] Email
-- sync.wesm@gmail.com
-[x] LinkedIn
-- linkedin.com/in/wesmelo
+    - sync.wesm@gmail.com
 
-[x] Personal Note: 
-- If you've read this far and want to connect with me professionally, feel free to reach out using the links above.`
+[x] LinkedIn
+    - linkedin.com/in/wesmelo
+
+$ cat README.md
+-------------------------------------------------------------------------
+[x] Personal Note:
+    - If you've read this far and want to connect with me 
+      professionally, feel free to reach out using the links above.
+
+`
 
   return (
     <div ref={sectionRef}>

@@ -108,8 +108,9 @@ export default function Terminal() {
       {/* Terminal Content */}
       <div ref={terminalContentRef} className="bg-blue-900 text-white p-4 h-full overflow-y-auto font-mono text-sm">
         <AsciiTitle selectedOption={activeSection} />
-        <p className="mb-4">Welcome to Wesley Melo interactive website terminal</p>
-        <p className="mb-6 text-gray-400">{">"} made by wesm.tech - still mostly human (last checked) | @2025</p>
+        <p className="mb-4">Welcome to Wesley Melo interactive website terminal 
+          <br/>~ ( Use arrow keys to choose the options below ) ~ </p>
+        <p className="mb-6 text-gray-400">{">"} Made by Wesley M. | v1.0.0 | wesm.tech © 2025 </p>
 
         {activeSection === "menu" && <Menu onSelect={handleMenuSelect} />}
 

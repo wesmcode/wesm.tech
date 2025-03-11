@@ -69,13 +69,19 @@ export default function Menu({ onSelect }: MenuProps) {
   return (
     <div className="focus:outline-none" tabIndex={0} onKeyDown={handleKeyDown}>
       <p className="mb-4 text-yellow-300">
-        ? Admin Dashboard | Unknown user | {currentDateTime} | (Use arrow keys to choose the options below)
+        ? Admin Dashboard | Unknown user | {currentDateTime}
       </p>
       <div className="pl-2">
         {options.map((option, index) => (
           <div
             key={option.id}
-            className={`cursor-pointer py-1 ${selectedIndex === index ? "text-white bg-blue-600" : ""}`}
+            className={`cursor-pointer py-1 ${
+              selectedIndex === index 
+                ? option.id === "memoir" 
+                  ? "text-lime-500 bg-blue-600" 
+                  : "text-white bg-blue-600" 
+                : ""
+            }`}
             onClick={() => {
               setSelectedIndex(index)
               onSelect(option.id)
@@ -83,7 +89,9 @@ export default function Menu({ onSelect }: MenuProps) {
           >
             {selectedIndex === index ? "> " : "  "}
             {selectedIndex === index ? (
-              <span className="font-bold">{option.label}</span>
+              <span className={`font-bold ${option.id === "memoir" ? "text-lime-500" : ""}`}>
+                {option.label}
+              </span>
             ) : (
               option.label
             )}
