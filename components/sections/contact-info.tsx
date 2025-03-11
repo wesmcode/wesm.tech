@@ -60,6 +60,9 @@ $ cat contact.conf
 [x] LinkedIn
     - linkedin.com/in/wesmelo
 
+[x] Website
+    - wesm.tech
+
 $ cat README.md
 -------------------------------------------------------------------------
 [x] Personal Note:
