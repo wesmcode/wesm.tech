@@ -171,8 +171,8 @@ export default function Terminal() {
         >
           <AsciiTitle selectedOption={activeSection} />
           <TypewriterEffect 
-            text="Welcome to Wesley Melo interactive website terminal 
-            ~ ( Use arrow keys to choose the options below ) ~ "
+            text="Welcome to Wesley Melo interactive website terminal
+~ ( Use arrow keys to choose the options below ) ~"
             className="mb-4 terminal-text"
             skipAnimation={isMobile || skipTypewriter}
           />
