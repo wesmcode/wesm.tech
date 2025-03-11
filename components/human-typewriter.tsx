@@ -70,6 +70,26 @@ export default function HumanTypewriter({
     scrollContainer,
   ])
 
+  // Add effect to handle Enter key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !isComplete) {
+        setDisplayedText(text)
+        setCurrentIndex(text.length)
+        setIsComplete(true)
+        setIsPaused(false)
+        
+        // Auto-scroll if container is provided
+        if (scrollContainer?.current) {
+          scrollContainer.current.scrollTop = scrollContainer.current.scrollHeight
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [text, isComplete, scrollContainer])
+
   return (
     <div className="whitespace-pre-line">
       {displayedText}
