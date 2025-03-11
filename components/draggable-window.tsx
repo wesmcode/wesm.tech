@@ -37,21 +37,39 @@ export default function DraggableWindow({ children, isFullscreen = false }: Drag
     boundaryRef.current = isAtBoundary
   }, [isAtBoundary])
 
-  // Center the window and set responsive size on initial render
+  // Now add this at beginning of component function, just after the state declarations
+  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
+
+  // And update the initial centering useEffect to ensure mobile is fullscreen
   useEffect(() => {
     if (windowRef.current && typeof window !== "undefined") {
       // Responsive sizing
       const isMobile = window.innerWidth < 768
-      const newWidth = isMobile ? Math.min(window.innerWidth - 32, 400) : Math.min(window.innerWidth - 64, 800)
-      const newHeight = isMobile ? Math.min(window.innerHeight - 100, 500) : Math.min(window.innerHeight - 100, 600)
+      
+      if (isMobile) {
+        // On mobile, make it fullscreen - use window.innerWidth directly
+        setSize({ 
+          width: window.innerWidth, 
+          height: window.innerHeight 
+        })
+        setPosition({ x: 0, y: 0 })
+      } else {
+        // For desktop, maintain the normal behavior
+        const newWidth = Math.min(window.innerWidth - 64, 800)
+        const newHeight = Math.min(window.innerHeight - 100, 600)
 
-      setSize({ width: newWidth, height: newHeight })
+        setSize({ width: newWidth, height: newHeight })
 
-      // Center positioning
-      const x = (window.innerWidth - newWidth) / 2
-      const y = (window.innerHeight - newHeight) / 4
-      setPosition({ x, y })
-      setStartSize({ width: newWidth, height: newHeight })
+        // Center positioning
+        const x = (window.innerWidth - newWidth) / 2
+        const y = (window.innerHeight - newHeight) / 4
+        setPosition({ x, y })
+      }
+      
+      setStartSize({ 
+        width: isMobile ? window.innerWidth : Math.min(window.innerWidth - 64, 800),
+        height: isMobile ? window.innerHeight : Math.min(window.innerHeight - 100, 600)
+      })
     }
   }, [])
 
@@ -211,25 +229,26 @@ export default function DraggableWindow({ children, isFullscreen = false }: Drag
   // Handle window resize
   useEffect(() => {
     const handleResize = () => {
-      if (typeof window !== "undefined" && !isFullscreen) {
+      if (typeof window !== "undefined") {
         const isMobile = window.innerWidth < 768
-        const currentPosition = latestStateRef.current.position;
-        const currentSize = latestStateRef.current.size;
-        const boundaries = { ...boundaryRef.current };
-        let newX = currentPosition.x;
-        let newY = currentPosition.y;
-        let newWidth = currentSize.width;
-        let newHeight = currentSize.height;
-
-        // On mobile, make window fill most of the screen
-        if (isMobile) {
-          newWidth = Math.min(window.innerWidth - 32, 400)
-          newHeight = Math.min(window.innerHeight - 100, 500)
-
-          // Center the window
-          newX = (window.innerWidth - newWidth) / 2
-          newY = (window.innerHeight - newHeight) / 4
+        
+        if (isMobile || isFullscreen) {
+          // For mobile or fullscreen, take up the entire viewport
+          setSize({ 
+            width: window.innerWidth, 
+            height: window.innerHeight 
+          })
+          setPosition({ x: 0, y: 0 })
         } else {
+          // Desktop normal window behavior
+          const currentPosition = latestStateRef.current.position;
+          const currentSize = latestStateRef.current.size;
+          const boundaries = { ...boundaryRef.current };
+          let newX = currentPosition.x;
+          let newY = currentPosition.y;
+          let newWidth = currentSize.width;
+          let newHeight = currentSize.height;
+
           // For desktop, ensure window stays within viewport after resize
           if (newX + newWidth > window.innerWidth) {
             if (newWidth > window.innerWidth) {
@@ -254,11 +273,11 @@ export default function DraggableWindow({ children, isFullscreen = false }: Drag
               boundaries.bottom = true;
             }
           }
-        }
 
-        setPosition({ x: newX, y: newY });
-        setSize({ width: newWidth, height: newHeight });
-        setIsAtBoundary(boundaries);
+          setPosition({ x: newX, y: newY });
+          setSize({ width: newWidth, height: newHeight });
+          setIsAtBoundary(boundaries);
+        }
       }
     }
 
@@ -269,17 +288,27 @@ export default function DraggableWindow({ children, isFullscreen = false }: Drag
   return (
     <div
       ref={windowRef}
-      className={`absolute rounded-lg overflow-hidden shadow-2xl border ${
-        isAtBoundary.top || isAtBoundary.right || isAtBoundary.bottom || isAtBoundary.left
-          ? 'border-red-500 border-2'
-          : 'border-gray-200'
-      }`}
+      className={`flex flex-col overflow-hidden ${isMobile ? 'mobile-terminal' : 'rounded-lg border shadow-lg'}`}
       style={{
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: size.height,
-        zIndex: 50,
+        position: "absolute",
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        width: `${size.width}px`,
+        height: `${size.height}px`,
+        zIndex: 10,
+        maxWidth: "100vw",
+        maxHeight: "100vh",
+        ...(isMobile && { 
+          width: "100vw", 
+          height: "calc(100vh - 50px)",
+          top: "0",
+          left: "0",
+          maxWidth: "100vw",
+          maxHeight: "calc(100vh - 50px)",
+          borderRadius: "0",
+          border: "none",
+          boxShadow: "none"
+        })
       }}
     >
       {/* Header - draggable area */}
@@ -295,25 +324,27 @@ export default function DraggableWindow({ children, isFullscreen = false }: Drag
         {Array.isArray(children) ? children[1] : children}
       </div>
 
-      {/* Resize handle - hide when fullscreen */}
-      {!isFullscreen && (
+      {/* Resize handle - hide on mobile or fullscreen */}
+      {!isFullscreen && !isMobile && (
         <div
-          className="absolute bottom-0 right-0 w-6 h-6 cursor-nwse-resize flex items-center justify-center"
+          className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"
           onMouseDown={handleResizeStart}
         >
           <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="12"
-            height="12"
+            width="16"
+            height="16"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className="text-gray-500"
+            xmlns="http://www.w3.org/2000/svg"
+            className="text-gray-400"
           >
-            <polyline points="22 12 18 12 18 8"></polyline>
-            <polyline points="12 22 12 18 8 18"></polyline>
-            <path d="M12 12L22 22"></path>
+            <path
+              d="M22 22L12 22M22 22L22 12M22 22L11 11"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </div>
       )}

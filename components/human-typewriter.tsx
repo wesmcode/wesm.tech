@@ -7,6 +7,7 @@ type Props = {
   speed?: number
   pauseProbability?: number
   scrollContainer?: RefObject<HTMLDivElement | null>
+  skipAnimation?: boolean
 }
 
 export default function HumanTypewriter({
@@ -14,10 +15,11 @@ export default function HumanTypewriter({
   speed = 50,
   pauseProbability = 0.1,
   scrollContainer,
+  skipAnimation = false,
 }: Props) {
   const [displayedText, setDisplayedText] = useState("")
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isComplete, setIsComplete] = useState(false)
+  const [isComplete, setIsComplete] = useState(skipAnimation)
   const [isPaused, setIsPaused] = useState(false)
 
   const getRandomSpeed = () => {
@@ -26,6 +28,20 @@ export default function HumanTypewriter({
   }
 
   useEffect(() => {
+    // If skipAnimation is true, immediately show the full text
+    if (skipAnimation && !isComplete) {
+      setDisplayedText(text);
+      setCurrentIndex(text.length);
+      setIsComplete(true);
+      setIsPaused(false);
+      
+      // Auto-scroll if container is provided
+      if (scrollContainer?.current) {
+        scrollContainer.current.scrollTop = scrollContainer.current.scrollHeight;
+      }
+      return;
+    }
+    
     if (currentIndex < text.length) {
       let timeout: NodeJS.Timeout
 
@@ -68,6 +84,7 @@ export default function HumanTypewriter({
     isPaused,
     pauseProbability,
     scrollContainer,
+    skipAnimation,
   ])
 
   // Add effect to handle Enter key press
@@ -89,6 +106,21 @@ export default function HumanTypewriter({
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [text, isComplete, scrollContainer])
+
+  // Update when skipAnimation changes
+  useEffect(() => {
+    if (skipAnimation && !isComplete) {
+      setDisplayedText(text);
+      setCurrentIndex(text.length);
+      setIsComplete(true);
+      setIsPaused(false);
+      
+      // Auto-scroll if container is provided
+      if (scrollContainer?.current) {
+        scrollContainer.current.scrollTop = scrollContainer.current.scrollHeight;
+      }
+    }
+  }, [skipAnimation, isComplete, text, scrollContainer]);
 
   return (
     <div className="whitespace-pre-line">

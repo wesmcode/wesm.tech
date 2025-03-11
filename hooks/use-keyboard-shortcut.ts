@@ -2,16 +2,18 @@
 
 import { useEffect } from "react"
 
-export default function useKeyboardShortcut(key: string, callback: () => void) {
+type KeyboardShortcutHandler = (event: KeyboardEvent) => void
+
+export function useKeyboardShortcut(key: string, handler: KeyboardShortcutHandler) {
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === key.toLowerCase()) {
-        callback()
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === key) {
+        handler(event)
       }
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [key, callback])
+  }, [key, handler])
 }
 

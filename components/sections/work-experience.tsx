@@ -6,9 +6,10 @@ import Link from "next/link"
 
 type Props = {
   onReturn: () => void
+  skipAnimation?: boolean
 }
 
-export default function WorkExperience({ onReturn }: Props) {
+export default function WorkExperience({ onReturn, skipAnimation = false }: Props) {
   const [showContent, setShowContent] = useState(false)
   const sectionRef = useRef<HTMLDivElement>(null)
 
@@ -120,7 +121,12 @@ $ certifications --list
     <div ref={sectionRef}>
       {showContent ? (
         <>
-          <TypewriterEffect text={content} speed={10} onComplete={scrollToBottom} />
+          <TypewriterEffect 
+            text={content} 
+            speed={10} 
+            onComplete={scrollToBottom}
+            skipAnimation={skipAnimation}
+          />
           <div className="mt-4">
             <Link
               href="https://www.linkedin.com/in/wesmelo"

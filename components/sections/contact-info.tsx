@@ -5,9 +5,10 @@ import TypewriterEffect from "../typewriter-effect"
 
 type Props = {
   onReturn: () => void
+  skipAnimation?: boolean
 }
 
-export default function ContactInfo({ onReturn }: Props) {
+export default function ContactInfo({ onReturn, skipAnimation = false }: Props) {
   const [showContent, setShowContent] = useState(false)
   const sectionRef = useRef<HTMLDivElement>(null)
 
@@ -75,7 +76,12 @@ $ cat README.md
     <div ref={sectionRef}>
       {showContent ? (
         <>
-          <TypewriterEffect text={content} speed={10} onComplete={scrollToBottom} />
+          <TypewriterEffect 
+            text={content} 
+            speed={10} 
+            onComplete={scrollToBottom}
+            skipAnimation={skipAnimation}
+          />
           <p className="mt-4 text-yellow-300">(press r to return to the menu, press enter to skip animations)</p>
         </>
       ) : (

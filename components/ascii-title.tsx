@@ -1,9 +1,11 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 export default function AsciiTitle({ selectedOption }: { selectedOption?: string }) {
   const [currentBannerIndex, setCurrentBannerIndex] = useState(0)
+  const isMobile = useIsMobile()
 
   const banners = [
     `
@@ -29,7 +31,8 @@ $$ | $$ | $$ |$$   ____| \\____$$\\ $$ |$$   ____|$$ |  $$ |
                                                  \\______/
 
 `,
-    `                                 
+    `
+                                 
                   (              
  (  (      (      )\\   (   (     
  )\\))(    ))\\ (  ((_) ))\\  )\\ )  
@@ -122,7 +125,7 @@ _(()((_)(_)) ((_)| |(_))   )(_))
 
   return (
     <div className="overflow-hidden">
-      <pre className="text-purple-400 mb-4 text-xs sm:text-sm overflow-x-auto whitespace-pre-wrap md:whitespace-pre">
+      <pre className={`text-purple-400 mb-4 ${isMobile ? 'ascii-title' : 'text-xs sm:text-sm'} overflow-x-auto ${isMobile ? 'whitespace-pre-wrap' : 'whitespace-pre-wrap md:whitespace-pre'}`}>
         {banners[currentBannerIndex]}
       </pre>
     </div>

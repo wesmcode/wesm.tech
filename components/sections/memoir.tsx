@@ -6,9 +6,10 @@ import { X } from "lucide-react"
 
 type Props = {
   onReturn: () => void
+  skipAnimation?: boolean
 }
 
-export default function Memoir({ onReturn }: Props) {
+export default function Memoir({ onReturn, skipAnimation = false }: Props) {
   const [isOpen, setIsOpen] = useState(false)
   const [isConnecting, setIsConnecting] = useState(true)
   const contentRef = useRef<HTMLDivElement>(null)
@@ -29,11 +30,11 @@ USER       PID  %CPU %MEM   VSZ  RSS TTY   STAT START  TIME COMMAND
 wesley   31415  10.0  5.0  4096 1024 tty1  Ds+  09:00  0:45 meeting-that-could-be-email
 
   
-"Wesley, are are there?"
+"Wesley, are YOU there?"
 
 The voice of my project manager cuts through my daydream about perfectly organized Jira boards. I'm sitting in yet another meeting that could've been an email, pretending to take notes while actually sketching a user flow on figjam.
 
-“Sure!," I lie, straightening up in my chair. "The stakeholder alignment is critical for the Q2 roadmap."
+"Sure!," I lie, straightening up in my chair. "The stakeholder alignment is critical for the Q2 roadmap."
 
 She narrows her eyes. I've used the right buzzwords, but we both know I wasn't listening. Ten years in this industry has taught me how to sound attentive while my mind wanders to more productive places.
 
@@ -43,13 +44,13 @@ When I was a little boy I never planned to become a product person. When I start
 
 It was meant as an insult in developer circles, but something about it rang true. I did enjoy translating business needs into technical solutions. And so began my reluctant journey across the digital divide.
 
-"Your job title makes no sense," my mother tells me over Sunday dinner. "What exactly is a 'Product Manager’? Do you manage things? Is it like… important person?"
+"Your job title makes no sense," my mother tells me over Sunday dinner. "What exactly is a 'Product Manager' Do you manage things? Is it like… important person?"
 
 "It's more like I own the problems, Mom."
 
 "So you're a... professional problem haver?" She looks concerned.
 
-"Something like that." - I’ve explained my job a dozen times, but she still introduces me to relatives as "my son who does computer things." Which, to be fair, is not entirely wrong.
+"Something like that." - I've explained my job a dozen times, but she still introduces me to relatives as "my son who does computer things." Which, to be fair, is not entirely wrong.
 
 Close enough.
 
@@ -147,6 +148,7 @@ legally coincidental.`
                 speed={30}
                 pauseProbability={0.1}
                 scrollContainer={contentRef}
+                skipAnimation={skipAnimation}
               />
             </div>
           </div>

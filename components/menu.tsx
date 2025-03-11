@@ -1,13 +1,15 @@
 "use client"
 
-import { useState, useEffect, type KeyboardEvent } from "react"
+import { useState, useEffect, useRef, type KeyboardEvent, Dispatch, SetStateAction } from "react"
 
 type MenuOption = "profile" | "experience" | "skills" | "contact" | "memoir" | "exit"
 type MenuProps = {
-  onSelect: (option: MenuOption | "menu") => void
+  onSelect: (option: MenuOption | "menu") => void;
+  mobileSelectedIndex?: number;
+  onMobileIndexChange?: Dispatch<SetStateAction<number>>;
 }
 
-export default function Menu({ onSelect }: MenuProps) {
+export default function Menu({ onSelect, mobileSelectedIndex, onMobileIndexChange }: MenuProps) {
   const options: { id: MenuOption; label: string }[] = [
     { id: "profile", label: "professional profile" },
     { id: "experience", label: "work experience" },
@@ -17,33 +19,50 @@ export default function Menu({ onSelect }: MenuProps) {
     { id: "exit", label: "Exit" },
   ]
 
-  const [selectedIndex, setSelectedIndex] = useState(0)
-  const [currentDateTime, setCurrentDateTime] = useState<string>("")
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "ArrowUp") {
-      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev))
-    } else if (e.key === "ArrowDown") {
-      setSelectedIndex((prev) => (prev < options.length - 1 ? prev + 1 : prev))
-    } else if (e.key === "Enter") {
-      onSelect(options[selectedIndex].id)
-    }
-  }
-
-  useEffect(() => {
-    const handleKeyPress = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "ArrowUp") {
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev))
-      } else if (e.key === "ArrowDown") {
-        setSelectedIndex((prev) => (prev < options.length - 1 ? prev + 1 : prev))
-      } else if (e.key === "Enter") {
-        onSelect(options[selectedIndex].id)
+  // Use mobileSelectedIndex if provided, otherwise use internal state
+  const [localSelectedIndex, setLocalSelectedIndex] = useState(0)
+  const selectedIndex = mobileSelectedIndex !== undefined ? mobileSelectedIndex : localSelectedIndex
+  const setSelectedIndex = (newIndex: number | ((prev: number) => number)) => {
+    if (onMobileIndexChange && mobileSelectedIndex !== undefined) {
+      if (typeof newIndex === 'function') {
+        onMobileIndexChange(newIndex);
+      } else {
+        onMobileIndexChange(newIndex);
+      }
+    } else {
+      if (typeof newIndex === 'function') {
+        setLocalSelectedIndex(newIndex);
+      } else {
+        setLocalSelectedIndex(newIndex);
       }
     }
-
-    window.addEventListener("keydown", handleKeyPress)
-    return () => window.removeEventListener("keydown", handleKeyPress)
-  }, [selectedIndex, onSelect, options])
+  };
+  
+  const [currentDateTime, setCurrentDateTime] = useState<string>("")
+  
+  // Add ref for focus management
+  const menuRef = useRef<HTMLDivElement>(null);
+  
+  // Auto-focus the menu when it mounts
+  useEffect(() => {
+    if (menuRef.current) {
+      menuRef.current.focus();
+    }
+  }, []);
+  
+  // Handle keyboard navigation for desktop
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : prev));
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev < options.length - 1 ? prev + 1 : prev));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      onSelect(options[selectedIndex].id);
+    }
+  };
 
   // Update current date and time
   useEffect(() => {
@@ -67,24 +86,29 @@ export default function Menu({ onSelect }: MenuProps) {
   }, [])
 
   return (
-    <div className="focus:outline-none" tabIndex={0} onKeyDown={handleKeyDown}>
+    <div 
+      className="terminal-menu"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      ref={menuRef}
+    >
       <p className="mb-4 text-yellow-300">
         ? Admin Dashboard | Unknown user | {currentDateTime}
       </p>
-      <div className="pl-2">
+      <div className="pl-2 w-full">
         {options.map((option, index) => (
           <div
             key={option.id}
-            className={`cursor-pointer py-1 ${
+            className={`cursor-pointer py-1 terminal-menu-item ${
               selectedIndex === index 
                 ? option.id === "memoir" 
-                  ? "text-lime-500 bg-blue-600" 
-                  : "text-white bg-blue-600" 
+                  ? "text-lime-500 bg-blue-600 selected" 
+                  : "text-white bg-blue-600 selected" 
                 : ""
             }`}
             onClick={() => {
-              setSelectedIndex(index)
-              onSelect(option.id)
+              setSelectedIndex(index);
+              onSelect(option.id);
             }}
           >
             {selectedIndex === index ? "> " : "  "}
