@@ -114,7 +114,6 @@ $ certifications --list
 - Certified Product Leadership and Strategic Alignment Practitioner, Caroli.org
 - Certified Lean Inception Facilitator, Caroli.org
 
-
   `
 
   return (
@@ -136,7 +135,6 @@ $ certifications --list
               [press to connect on LinkedIn]
             </Link>
           </div>
-          <p className="mt-4 text-yellow-300">(press r to return to the menu, press enter to skip animations)</p>
         </>
       ) : (
         <p>Loading experience data...</p>

@@ -43,7 +43,7 @@ export default function AvailableSkills({ onReturn, skipAnimation = false }: Pro
 
   const content = `$ cat profile.txt
 ┌────────────────────────────────────────────────────────────┐
-│ USER PROFILE                                   STATUS: ACTIVE │
+│ USER PROFILE                                STATUS: ACTIVE │
 └────────────────────────────────────────────────────────────┘
 
 [✓] The tools and capabilities I've developed throughout my career 
@@ -91,7 +91,6 @@ CURRENT FOMO SUBJECTS:
             onComplete={scrollToBottom}
             skipAnimation={skipAnimation}
           />
-          <p className="mt-4 text-yellow-300">(press r to return to the menu, press enter to skip animations)</p>
         </>
       ) : (
         <p>Loading skills data...</p>

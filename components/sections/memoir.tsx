@@ -24,13 +24,7 @@ export default function Memoir({ onReturn, skipAnimation = false }: Props) {
   }, [])
 
   const memoirText = `
-$ ps aux | grep meeting
--------------------------------------------------------------------------
-USER       PID  %CPU %MEM   VSZ  RSS TTY   STAT START  TIME COMMAND
-wesley   31415  10.0  5.0  4096 1024 tty1  Ds+  09:00  0:45 meeting-that-could-be-email
-
-  
-"Wesley, are YOU there?"
+.............................. Wesley, are YOU there?
 
 The voice of my project manager cuts through my daydream about perfectly organized Jira boards. I'm sitting in yet another meeting that could've been an email, pretending to take notes while actually sketching a user flow on figjam.
 
@@ -154,8 +148,6 @@ legally coincidental.`
           </div>
         </div>
       )}
-
-      {!isOpen && !isConnecting && <p className="text-yellow-300">(press r to return to the menu, press enter to skip animations)</p>}
 
       <div className="sr-only">
         <button onClick={onReturn}>Return to menu</button>

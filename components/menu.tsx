@@ -102,7 +102,7 @@ export default function Menu({ onSelect, mobileSelectedIndex, onMobileIndexChang
             className={`cursor-pointer py-1 terminal-menu-item ${
               selectedIndex === index 
                 ? option.id === "memoir" 
-                  ? "text-lime-500 bg-blue-600 selected" 
+                  ? "text-yellow-300 bg-blue-600 selected" 
                   : "text-white bg-blue-600 selected" 
                 : ""
             }`}
@@ -113,7 +113,7 @@ export default function Menu({ onSelect, mobileSelectedIndex, onMobileIndexChang
           >
             {selectedIndex === index ? "> " : "  "}
             {selectedIndex === index ? (
-              <span className={`font-bold ${option.id === "memoir" ? "text-lime-500" : ""}`}>
+              <span className={`font-bold ${option.id === "memoir" ? "text-yellow-300" : ""}`}>
                 {option.label}
               </span>
             ) : (

@@ -26,6 +26,7 @@ export default function Terminal() {
   const isMobile = useIsMobile()
   const [menuIndex, setMenuIndex] = useState(0)
   const [skipTypewriter, setSkipTypewriter] = useState(false)
+  const [typingStage, setTypingStage] = useState(0)
   
   const menuOptions = [
     { id: "profile", label: "professional profile" },
@@ -170,12 +171,28 @@ export default function Terminal() {
           } : {}}
         >
           <AsciiTitle selectedOption={activeSection} />
-          <TypewriterEffect 
-            text="Welcome to Wesley Melo interactive website terminal
-~ ( Use arrow keys to choose the options below ) ~"
-            className="mb-4 terminal-text"
-            skipAnimation={isMobile || skipTypewriter}
-          />
+          <div className="mb-4 terminal-text">
+            <TypewriterEffect 
+              text="Welcome to Wesley Melo interactive website terminal"
+              skipAnimation={isMobile || skipTypewriter}
+              onComplete={() => !skipTypewriter && setTypingStage(1)}
+            />
+            
+            {(typingStage >= 1 || skipTypewriter) && (
+              <TypewriterEffect 
+                text="~ ( Use arrow keys to choose the options below ) ~"
+                skipAnimation={isMobile || skipTypewriter}
+                onComplete={() => !skipTypewriter && setTypingStage(2)}
+              />
+            )}
+            
+            {(typingStage >= 2 || skipTypewriter) && (
+              <TypewriterEffect 
+                text="~ (press r to return to the menu, press enter to skip animations) ~"
+                skipAnimation={isMobile || skipTypewriter}
+              />
+            )}
+          </div>
           <p className="mb-6 text-gray-400 terminal-text">{">"} Made by Wesley M. | v1.0.0 | wesm.tech © 2025 </p>
 
           {activeSection === "menu" && (
