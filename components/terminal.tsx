@@ -14,7 +14,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import MobileNavControls from "./mobile-nav-controls"
 import TypewriterEffect from "./typewriter-effect"
 
-type Section = "menu" | "profile" | "experience" | "skills" | "contact" | "memoir" | "exit"
+type Section = "menu" | "profile" | "experience" | "skills" | "contact" | "memoir" | "resume" | "exit"
 
 export default function Terminal() {
   const [activeSection, setActiveSection] = useState<Section>("menu")
@@ -33,6 +33,7 @@ export default function Terminal() {
     { id: "experience", label: "work experience" },
     { id: "skills", label: "available skills" },
     { id: "contact", label: "contact info" },
+    { id: "resume", label: "open resume (PDF)" },
     { id: "memoir", label: "#M3M0!R#" },
     { id: "exit", label: "Exit" },
   ] as const;
@@ -91,6 +92,12 @@ export default function Terminal() {
       setExitCounter(4)
       return
     }
+    
+    if (section === "resume") {
+      window.open("/wesley_melo_resume_remote.pdf", "_blank")
+      return
+    }
+    
     setActiveSection(section)
   }
 

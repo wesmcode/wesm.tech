@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, type KeyboardEvent, Dispatch, SetStateAction } from "react"
 
-type MenuOption = "profile" | "experience" | "skills" | "contact" | "memoir" | "exit"
+type MenuOption = "profile" | "experience" | "skills" | "contact" | "memoir" | "resume" | "exit"
 type MenuProps = {
   onSelect: (option: MenuOption | "menu") => void;
   mobileSelectedIndex?: number;
@@ -15,6 +15,7 @@ export default function Menu({ onSelect, mobileSelectedIndex, onMobileIndexChang
     { id: "experience", label: "work experience" },
     { id: "skills", label: "available skills" },
     { id: "contact", label: "contact info" },
+    { id: "resume", label: "open resume (PDF)" },
     { id: "memoir", label: "#M3M0!R#" },
     { id: "exit", label: "Exit" },
   ]
