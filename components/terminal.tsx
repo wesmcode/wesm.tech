@@ -3,9 +3,6 @@
 import { useState, useEffect, useRef } from "react"
 import AsciiTitle from "./ascii-title"
 import Menu from "./menu"
-import ProfessionalProfile from "./sections/professional-profile"
-import WorkExperience from "./sections/work-experience"
-import AvailableSkills from "./sections/available-skills"
 import ContactInfo from "./sections/contact-info"
 import Memoir from "./sections/memoir"
 import { useRouter } from "next/navigation"
@@ -14,7 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile"
 import MobileNavControls from "./mobile-nav-controls"
 import TypewriterEffect from "./typewriter-effect"
 
-type Section = "menu" | "profile" | "experience" | "skills" | "contact" | "memoir" | "resume" | "exit"
+type Section = "menu" | "contact" | "memoir" | "resume" | "exit"
 
 export default function Terminal() {
   const [activeSection, setActiveSection] = useState<Section>("menu")
@@ -29,13 +26,10 @@ export default function Terminal() {
   const [typingStage, setTypingStage] = useState(0)
   
   const menuOptions = [
-    { id: "profile", label: "professional profile" },
-    { id: "experience", label: "work experience" },
-    { id: "skills", label: "available skills" },
     { id: "contact", label: "contact info" },
-    { id: "resume", label: "open resume (PDF)" },
-    { id: "memoir", label: "#M3M0!R#" },
-    { id: "exit", label: "Exit" },
+    { id: "resume", label: "wesley resume.pdf" },
+    { id: "memoir", label: "memoir" },
+    { id: "exit", label: "exit" },
   ] as const;
 
   // Force fullscreen on mobile
@@ -62,7 +56,17 @@ export default function Terminal() {
   // Handle exit countdown
   useEffect(() => {
     if (exitCounter === 0) {
-      window.open("https://www.linkedin.com/in/wesmelo", "_blank")
+      // Add rel parameter and ensure proper URL format
+      const newWindow = window.open("https://www.linkedin.com/in/wesmelo", "_blank", "noopener,noreferrer")
+      
+      // Force the window to open by focusing it if possible
+      if (newWindow) {
+        newWindow.focus()
+      } else {
+        // Fallback if popup is blocked
+        alert("Please allow popups for this website to use the exit functionality")
+      }
+      
       setExitCounter(null)
       setActiveSection("menu")
     }
@@ -94,7 +98,10 @@ export default function Terminal() {
     }
     
     if (section === "resume") {
-      window.open("/wesley_melo_resume_remote.pdf", "_blank")
+      const newWindow = window.open("/wesley_melo_resume_remote.pdf", "_blank", "noopener,noreferrer")
+      if (newWindow) {
+        newWindow.focus()
+      }
       return
     }
     
@@ -106,7 +113,10 @@ export default function Terminal() {
   }
 
   const handleOpenLinkedIn = () => {
-    window.open("https://www.linkedin.com/in/wesmelo", "_blank")
+    const newWindow = window.open("https://www.linkedin.com/in/wesmelo", "_blank", "noopener,noreferrer")
+    if (newWindow) {
+      newWindow.focus()
+    }
   }
 
   const handleToggleFullscreen = () => {
@@ -207,27 +217,6 @@ export default function Terminal() {
               onSelect={handleMenuSelect} 
               mobileSelectedIndex={isMobile ? menuIndex : undefined} 
               onMobileIndexChange={isMobile ? setMenuIndex : undefined}
-            />
-          )}
-
-          {activeSection === "profile" && (
-            <ProfessionalProfile 
-              onReturn={handleReturn} 
-              skipAnimation={skipTypewriter}
-            />
-          )}
-
-          {activeSection === "experience" && (
-            <WorkExperience 
-              onReturn={handleReturn} 
-              skipAnimation={skipTypewriter}
-            />
-          )}
-
-          {activeSection === "skills" && (
-            <AvailableSkills 
-              onReturn={handleReturn} 
-              skipAnimation={skipTypewriter}
             />
           )}
 
