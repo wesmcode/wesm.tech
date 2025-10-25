@@ -424,7 +424,7 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
       {isMobile && (
         <div className="flex flex-col h-full">
           {/* Score panel - TOP PRIORITY */}
-          <div className="w-full flex justify-between text-sm mb-2 px-2 py-2 bg-blue-800/50 border-b border-blue-600">
+          <div className="w-full flex justify-between text-sm mb-1 px-2 py-1.5 bg-blue-800/50 border-b border-blue-600">
             <div>
               <span className="text-yellow-300 font-bold">Score:</span> <span className="text-white font-bold">{score}</span>
             </div>
@@ -436,19 +436,19 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
             </div>
           </div>
 
-          {/* Title and Instructions */}
-          <div className="mb-2 text-white px-2">
-            <p className="text-yellow-300 text-sm text-center font-bold">~ TETRIS - WESM.TECH ~</p>
-            <p className="text-xs text-center text-gray-300">
+          {/* Title and Instructions - Compact */}
+          <div className="mb-1 text-white px-2">
+            <p className="text-yellow-300 text-xs text-center font-bold">~ TETRIS ~</p>
+            <p className="text-xs text-center text-gray-400">
               ← → Move | ↑ Rotate | ↓ Drop
             </p>
           </div>
 
-          {/* Game board and next piece - ASCII style */}
-          <div className="flex-1 flex items-center justify-center">
-            <div className="flex gap-2 items-start">
-              {/* Main game board - ASCII - LARGER */}
-              <div className="flex flex-col font-mono text-base leading-none border-2 border-blue-600 p-1" style={{ letterSpacing: '0', backgroundColor: '#0f172a' }}>
+          {/* Game board and next piece - ASCII style - MUCH LARGER */}
+          <div className="flex-1 flex items-center justify-center px-1">
+            <div className="flex gap-1.5 items-start">
+              {/* Main game board - ASCII - EXTRA LARGE */}
+              <div className="flex flex-col font-mono text-xl leading-none border-2 border-blue-600 p-1.5" style={{ letterSpacing: '0', backgroundColor: '#0f172a' }}>
                 {displayBoard.map((row, y) => (
                   <div key={y} className="flex">
                     {row.map((cell, x) => (
@@ -465,10 +465,10 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
                 ))}
               </div>
 
-              {/* Next piece preview - ASCII */}
-              <div className="flex flex-col gap-1">
+              {/* Next piece preview - ASCII - Larger */}
+              <div className="flex flex-col gap-0.5">
                 <div className="text-xs text-yellow-300 text-center font-bold">NEXT</div>
-                <div className="flex flex-col font-mono text-sm leading-none border border-blue-600 p-1" style={{ letterSpacing: '0', backgroundColor: '#0f172a' }}>
+                <div className="flex flex-col font-mono text-base leading-none border border-blue-600 p-1" style={{ letterSpacing: '0', backgroundColor: '#0f172a' }}>
                   {nextPiece.shape.map((row, y) => (
                     <div key={y} className="flex">
                       {row.map((cell, x) => (
