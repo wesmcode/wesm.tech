@@ -16,9 +16,9 @@ type TetrisProps = {
 // Game constants
 const BOARD_WIDTH = 10
 const BOARD_HEIGHT = 20
-const INITIAL_DROP_SPEED = 1000
-const MIN_DROP_SPEED = 100
-const SPEED_INCREMENT = 50
+const INITIAL_DROP_SPEED = 600
+const MIN_DROP_SPEED = 80
+const SPEED_INCREMENT = 40
 
 // Letter shapes for tetrominoes (W, E, S, M, T, C, H)
 // Each shape is represented as a 4x4 grid with the letter character
@@ -408,22 +408,24 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
 
   return (
     <div className="tetris-game w-full">
-      {/* Instructions */}
-      <div className="mb-4 text-white">
-        <p className="text-yellow-300 mb-2">~ TETRIS - WESM.TECH Edition ~</p>
-        <p className="text-sm mb-1">~ Use arrow keys: ← → move, ↑ rotate, ↓ soft drop ~</p>
-        <p className="text-sm mb-1">~ Press SPACE for hard drop, P to pause ~</p>
-        <p className="text-sm mb-1">~ Press R to return to menu ~</p>
-        {!isMobile && <p className="text-sm text-gray-400">~ (Mobile only feature - use mobile device to play) ~</p>}
-      </div>
-
-      {/* Mobile-only notice */}
+      {/* Mobile-only notice for desktop */}
       {!isMobile && (
         <div className="mb-4 p-4 border border-yellow-500 bg-yellow-900/20">
-          <p className="text-yellow-300 text-center">
-            This game is designed for mobile devices only.
-            <br />
+          <p className="text-yellow-300 text-center mb-2">
+            ~ This game is designed for mobile devices only ~
+          </p>
+          <p className="text-white text-center text-sm">
             Please visit this page on a mobile device to play!
+          </p>
+        </div>
+      )}
+
+      {/* Mobile Instructions */}
+      {isMobile && (
+        <div className="mb-3 text-white">
+          <p className="text-yellow-300 mb-1 text-center">~ TETRIS - WESM.TECH Edition ~</p>
+          <p className="text-xs text-center text-gray-300">
+            ← → Move | ↑ Rotate | ↓ Drop
           </p>
         </div>
       )}
@@ -432,7 +434,7 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
       {isMobile && (
         <div className="flex flex-col items-center gap-4">
           {/* Score panel */}
-          <div className="w-full flex justify-between text-sm mb-2">
+          <div className="w-full flex justify-between text-xs mb-2 px-1">
             <div>
               <span className="text-yellow-300">Score:</span> {score}
             </div>
@@ -444,103 +446,61 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
             </div>
           </div>
 
-          {/* Game board and next piece */}
-          <div className="flex gap-4 items-start">
-            {/* Main game board */}
-            <div
-              className="game-board border-2 border-gray-400"
-              style={{
-                display: 'grid',
-                gridTemplateColumns: `repeat(${BOARD_WIDTH}, 1fr)`,
-                gridTemplateRows: `repeat(${BOARD_HEIGHT}, 1fr)`,
-                gap: '1px',
-                backgroundColor: '#1e293b',
-                padding: '2px',
-              }}
-            >
-              {displayBoard.map((row, y) =>
-                row.map((cell, x) => (
-                  <div
-                    key={`${y}-${x}`}
-                    className="game-cell"
-                    style={{
-                      width: '16px',
-                      height: '16px',
-                      backgroundColor: cell !== 0 ? getCellColor(cell as string) : '#0f172a',
-                      border: cell !== 0 ? '1px solid rgba(255, 255, 255, 0.2)' : 'none',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '10px',
-                      fontWeight: 'bold',
-                      color: '#000',
-                    }}
-                  >
-                    {cell !== 0 ? cell : ''}
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Next piece preview */}
-            <div className="flex flex-col gap-2">
-              <div className="text-xs text-yellow-300">Next:</div>
-              <div
-                className="border border-gray-400 p-1"
-                style={{
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(4, 1fr)',
-                  gridTemplateRows: 'repeat(4, 1fr)',
-                  gap: '1px',
-                  backgroundColor: '#1e293b',
-                }}
-              >
-                {nextPiece.shape.map((row, y) =>
-                  row.map((cell, x) => (
-                    <div
-                      key={`next-${y}-${x}`}
+          {/* Game board and next piece - ASCII style */}
+          <div className="flex gap-3 items-start justify-center">
+            {/* Main game board - ASCII */}
+            <div className="flex flex-col font-mono text-xs leading-none" style={{ letterSpacing: '0' }}>
+              {displayBoard.map((row, y) => (
+                <div key={y} className="flex">
+                  {row.map((cell, x) => (
+                    <span
+                      key={`${y}-${x}`}
                       style={{
-                        width: '12px',
-                        height: '12px',
-                        backgroundColor: cell !== 0 ? nextPiece.color : '#0f172a',
-                        border: cell !== 0 ? '1px solid rgba(255, 255, 255, 0.2)' : 'none',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '8px',
-                        fontWeight: 'bold',
-                        color: '#000',
+                        color: cell !== 0 ? getCellColor(cell as string) : '#1e3a5f',
                       }}
                     >
-                      {cell !== 0 ? cell : ''}
-                    </div>
-                  ))
-                )}
+                      {cell !== 0 ? '█' : '░'}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+
+            {/* Next piece preview - ASCII */}
+            <div className="flex flex-col gap-1">
+              <div className="text-xs text-yellow-300 text-center">Next</div>
+              <div className="flex flex-col font-mono text-xs leading-none" style={{ letterSpacing: '0' }}>
+                {nextPiece.shape.map((row, y) => (
+                  <div key={y} className="flex">
+                    {row.map((cell, x) => (
+                      <span
+                        key={`next-${y}-${x}`}
+                        style={{
+                          color: cell !== 0 ? nextPiece.color : '#0f172a',
+                        }}
+                      >
+                        {cell !== 0 ? '█' : ' '}
+                      </span>
+                    ))}
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
           {/* Game status */}
           {gameOver && (
-            <div className="mt-4 p-4 border-2 border-red-500 bg-red-900/20">
-              <p className="text-red-300 text-center text-lg font-bold mb-2">GAME OVER!</p>
-              <p className="text-white text-center mb-2">Final Score: {score}</p>
-              <p className="text-sm text-gray-300 text-center">Press ENTER to play again</p>
+            <div className="mt-2 p-3 border border-red-500 bg-red-900/20">
+              <p className="text-red-300 text-center font-bold mb-1">GAME OVER!</p>
+              <p className="text-white text-center text-sm">Score: {score}</p>
             </div>
           )}
 
           {isPaused && (
-            <div className="mt-4 p-4 border-2 border-yellow-500 bg-yellow-900/20">
-              <p className="text-yellow-300 text-center text-lg font-bold">PAUSED</p>
-              <p className="text-sm text-gray-300 text-center">Press P to resume</p>
+            <div className="mt-2 p-3 border border-yellow-500 bg-yellow-900/20">
+              <p className="text-yellow-300 text-center font-bold">PAUSED</p>
             </div>
           )}
-
-          {/* Mobile controls hint */}
-          <div className="mt-4 text-xs text-gray-400 text-center">
-            <p>Use the mobile controls at the bottom:</p>
-            <p>↑ = Move Left | ↓ = Move Right | &gt; = Rotate | R = Menu</p>
-          </div>
         </div>
       )}
     </div>
