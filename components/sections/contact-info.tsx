@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react"
 import TypewriterEffect from "../typewriter-effect"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 type Props = {
   onReturn: () => void
@@ -11,6 +12,7 @@ type Props = {
 export default function ContactInfo({ onReturn, skipAnimation = false }: Props) {
   const [showContent, setShowContent] = useState(false)
   const sectionRef = useRef<HTMLDivElement>(null)
+  const isMobile = useIsMobile()
 
   // Handle 'r' key press
   useEffect(() => {
@@ -41,7 +43,41 @@ export default function ContactInfo({ onReturn, skipAnimation = false }: Props) 
     }
   }
 
-  const content = `$ whoami
+  const mobileContent = `$ whoami
+WESLEY MELO
+
+$ system --status
+┌────────────────────────────┐
+│ USER STATUS                │
+├────────────────────────────┤
+│ location: Brazil           │
+│ status: online (Remote)    │
+│ relocation: open           │
+└────────────────────────────┘
+
+$ cat contact.conf
+─────────────────────────────
+[x] Email
+    sync.wesm@gmail.com
+
+[x] LinkedIn
+    linkedin.com/in/wesmelo
+
+[x] Website
+    wesm.tech
+
+$ cat README.md
+─────────────────────────────
+[x] Personal Note:
+    If you've read this far
+    and want to connect
+    professionally, feel
+    free to reach out using
+    the links above.
+
+`
+
+  const desktopContent = `$ whoami
 WESLEY MELO
 
 $ system --status
@@ -67,10 +103,12 @@ $ cat contact.conf
 $ cat README.md
 -------------------------------------------------------------------------
 [x] Personal Note:
-    - If you've read this far and want to connect with me 
+    - If you've read this far and want to connect with me
       professionally, feel free to reach out using the links above.
 
 `
+
+  const content = isMobile ? mobileContent : desktopContent
 
   return (
     <div ref={sectionRef}>
