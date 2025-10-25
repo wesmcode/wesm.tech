@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
-import { ThemeToggle } from '@/components/theme-toggle'
+import { AutoNoir } from '@/components/auto-noir'
 
 export const metadata: Metadata = {
   title: 'Wesley Melo | wesm.tech',
@@ -54,6 +54,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <AutoNoir />
           <a
             href="#main-content"
             className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-[100] focus:p-4 focus:bg-blue-600 focus:text-white focus:outline-none focus:ring-2 focus:ring-white"
@@ -61,7 +62,6 @@ export default function RootLayout({
             Skip to main content
           </a>
           <main id="main-content">{children}</main>
-          <ThemeToggle />
         </ThemeProvider>
       </body>
     </html>
