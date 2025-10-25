@@ -84,43 +84,51 @@ export default function Menu({ onSelect, mobileSelectedIndex, onMobileIndexChang
   }, [])
 
   return (
-    <div 
+    <nav
       className="terminal-menu"
+      role="navigation"
+      aria-label="Main menu"
       tabIndex={0}
       onKeyDown={handleKeyDown}
       ref={menuRef}
     >
-      <p className="mb-4 text-yellow-300">
+      <p className="mb-4 text-yellow-300" role="status" aria-live="polite">
         ? Admin Dashboard | Unknown user | {currentDateTime}
       </p>
-      <div className="pl-2 w-full">
+      <ul className="pl-2 w-full list-none" role="menu">
         {options.map((option, index) => (
-          <div
-            key={option.id}
-            className={`cursor-pointer py-1 terminal-menu-item ${
-              selectedIndex === index 
-                ? option.id === "memoir" 
-                  ? "text-yellow-300 bg-blue-600 selected" 
-                  : "text-white bg-blue-600 selected" 
-                : ""
-            }`}
-            onClick={() => {
-              setSelectedIndex(index);
-              onSelect(option.id);
-            }}
-          >
-            {selectedIndex === index ? "> " : "  "}
-            {selectedIndex === index ? (
-              <span className={`font-bold ${option.id === "memoir" ? "text-yellow-300" : ""}`}>
-                {option.label}
-              </span>
-            ) : (
-              option.label
-            )}
-          </div>
+          <li key={option.id} role="none">
+            <button
+              role="menuitem"
+              aria-label={option.label}
+              aria-current={selectedIndex === index ? "true" : "false"}
+              className={`w-full text-left cursor-pointer py-1 terminal-menu-item ${
+                selectedIndex === index
+                  ? option.id === "memoir"
+                    ? "text-yellow-300 bg-blue-600 selected"
+                    : "text-white bg-blue-600 selected"
+                  : ""
+              }`}
+              onClick={() => {
+                setSelectedIndex(index);
+                onSelect(option.id);
+              }}
+              onFocus={() => setSelectedIndex(index)}
+              tabIndex={selectedIndex === index ? 0 : -1}
+            >
+              {selectedIndex === index ? "> " : "  "}
+              {selectedIndex === index ? (
+                <span className={`font-bold ${option.id === "memoir" ? "text-yellow-300" : ""}`}>
+                  {option.label}
+                </span>
+              ) : (
+                option.label
+              )}
+            </button>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </nav>
   )
 }
 

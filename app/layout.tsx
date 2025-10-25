@@ -7,6 +7,12 @@ export const metadata: Metadata = {
   generator: 'Next.js',
   keywords: ['Wesley Melo', 'Product Manager', 'wesm.tech'],
   authors: [{ name: 'Wesley Melo', url: 'https://wesm.tech' }],
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 5,
+    userScalable: true,
+  },
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -39,7 +45,15 @@ export default function RootLayout({
       <head>
         <link rel="manifest" href="/site.webmanifest" />
       </head>
-      <body>{children}</body>
+      <body>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-[100] focus:p-4 focus:bg-blue-600 focus:text-white focus:outline-none focus:ring-2 focus:ring-white"
+        >
+          Skip to main content
+        </a>
+        <main id="main-content">{children}</main>
+      </body>
     </html>
   )
 }
