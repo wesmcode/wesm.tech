@@ -425,7 +425,7 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
         <div className="mb-3 text-white">
           <p className="text-yellow-300 mb-1 text-center">~ TETRIS - WESM.TECH Edition ~</p>
           <p className="text-xs text-center text-gray-300">
-            ↑ Move Left | ↓ Move Right | &gt; Rotate | R Menu
+            ← → Move | ↑ Rotate | ↓ Drop
           </p>
         </div>
       )}

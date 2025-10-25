@@ -115,8 +115,8 @@ export default function Terminal() {
     if (activeSection === "menu") {
       setMenuIndex((prev) => Math.max(0, prev - 1));
     } else if (activeSection === "tetris") {
-      // In Tetris: Up = Move Left
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
+      // In Tetris: Up = Rotate
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
     }
   }
 
@@ -124,7 +124,21 @@ export default function Terminal() {
     if (activeSection === "menu") {
       setMenuIndex((prev) => Math.min(4, prev + 1)); // 5 menu options (0-4)
     } else if (activeSection === "tetris") {
-      // In Tetris: Down = Move Right
+      // In Tetris: Down = Soft drop
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown' }));
+    }
+  }
+
+  const handleMobileLeft = () => {
+    if (activeSection === "tetris") {
+      // In Tetris: Left = Move Left
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
+    }
+  }
+
+  const handleMobileRight = () => {
+    if (activeSection === "tetris") {
+      // In Tetris: Right = Move Right
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
     }
   }
@@ -134,9 +148,6 @@ export default function Terminal() {
       // Menu options: contact, resume, memoir, tetris, exit
       const menuOptions: Section[] = ["contact", "resume", "memoir", "tetris", "exit"];
       handleMenuSelect(menuOptions[menuIndex]);
-    } else if (activeSection === "tetris") {
-      // In Tetris: Enter = Rotate
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
     } else {
       // Skip the typewriter animation in non-menu sections
       setSkipTypewriter(true);
@@ -258,8 +269,11 @@ export default function Terminal() {
       <MobileNavControls
         onUp={handleMobileUp}
         onDown={handleMobileDown}
+        onLeft={handleMobileLeft}
+        onRight={handleMobileRight}
         onEnter={handleMobileEnter}
         onReturn={handleReturn}
+        mode={activeSection === "tetris" ? "tetris" : "default"}
       />
     </>
   )
