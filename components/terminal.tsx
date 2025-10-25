@@ -5,6 +5,7 @@ import AsciiTitle from "./ascii-title"
 import Menu from "./menu"
 import ContactInfo from "./sections/contact-info"
 import Memoir from "./sections/memoir"
+import Tetris from "./sections/tetris"
 import DraggableWindow from "./draggable-window"
 import { useIsMobile } from "@/hooks/use-mobile"
 import MobileNavControls from "./mobile-nav-controls"
@@ -12,7 +13,7 @@ import TypewriterEffect from "./typewriter-effect"
 import { EXIT_COUNTDOWN_SECONDS, LINKEDIN_URL, RESUME_PDF_PATH, MOBILE_CONTROLS_HEIGHT_PX, SITE_VERSION, SITE_NAME, COPYRIGHT_YEAR, AUTHOR_NAME, AUTO_SCROLL_DELAY_MS, SKIP_ANIMATION_RESET_DELAY_MS } from "@/lib/constants"
 import { openInNewTab } from "@/lib/utils/window"
 
-type Section = "menu" | "contact" | "memoir" | "resume" | "exit"
+type Section = "menu" | "contact" | "memoir" | "resume" | "tetris" | "exit"
 
 const RETURN_TO_MENU_KEY = "r"
 
@@ -113,20 +114,29 @@ export default function Terminal() {
   const handleMobileUp = () => {
     if (activeSection === "menu") {
       setMenuIndex((prev) => Math.max(0, prev - 1));
+    } else if (activeSection === "tetris") {
+      // In Tetris: Up = Move Left
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowLeft' }));
     }
   }
 
   const handleMobileDown = () => {
     if (activeSection === "menu") {
-      setMenuIndex((prev) => Math.min(3, prev + 1)); // 4 menu options (0-3)
+      setMenuIndex((prev) => Math.min(4, prev + 1)); // 5 menu options (0-4)
+    } else if (activeSection === "tetris") {
+      // In Tetris: Down = Move Right
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
     }
   }
 
   const handleMobileEnter = () => {
     if (activeSection === "menu") {
-      // Menu options: contact, resume, memoir, exit (hardcoded to avoid duplication)
-      const menuOptions: Section[] = ["contact", "resume", "memoir", "exit"];
+      // Menu options: contact, resume, memoir, tetris, exit
+      const menuOptions: Section[] = ["contact", "resume", "memoir", "tetris", "exit"];
       handleMenuSelect(menuOptions[menuIndex]);
+    } else if (activeSection === "tetris") {
+      // In Tetris: Enter = Rotate
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp' }));
     } else {
       // Skip the typewriter animation in non-menu sections
       setSkipTypewriter(true);
@@ -218,6 +228,13 @@ export default function Terminal() {
 
           {activeSection === "memoir" && (
             <Memoir
+              onReturn={handleReturn}
+              skipAnimation={skipTypewriter}
+            />
+          )}
+
+          {activeSection === "tetris" && (
+            <Tetris
               onReturn={handleReturn}
               skipAnimation={skipTypewriter}
             />

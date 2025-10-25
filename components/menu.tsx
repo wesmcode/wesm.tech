@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, type KeyboardEvent, Dispatch, SetStateAction } from "react"
 import { DATETIME_UPDATE_INTERVAL_MS } from "@/lib/constants"
 
-type MenuOption = "contact" | "memoir" | "resume" | "exit"
+type MenuOption = "contact" | "memoir" | "resume" | "tetris" | "exit"
 
 type MenuProps = {
   onSelect: (option: MenuOption | "menu") => void;
@@ -15,6 +15,7 @@ const MENU_OPTIONS: { id: MenuOption; label: string }[] = [
   { id: "contact", label: "contact info" },
   { id: "resume", label: "open resume .pdf" },
   { id: "memoir", label: "live chat memoir" },
+  { id: "tetris", label: "play tetris" },
   { id: "exit", label: "exit" },
 ]
 
