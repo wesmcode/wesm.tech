@@ -3,24 +3,31 @@
 import { useState, useEffect, useRef } from "react"
 import HumanTypewriter from "../human-typewriter"
 import { X } from "lucide-react"
+import { MEMOIR_CONNECTION_DELAY_MS, HUMAN_TYPEWRITER_SPEED_MS } from "@/lib/constants"
 
-type Props = {
+type MemoirProps = {
   onReturn: () => void
   skipAnimation?: boolean
 }
 
-export default function Memoir({ onReturn, skipAnimation = false }: Props) {
+const PAUSE_PROBABILITY = 0.1
+
+export default function Memoir({ onReturn, skipAnimation = false }: MemoirProps) {
+  // State
   const [isOpen, setIsOpen] = useState(false)
   const [isConnecting, setIsConnecting] = useState(true)
+
+  // Refs
   const contentRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const modalRef = useRef<HTMLDivElement>(null)
 
+  // Show modal after connection delay
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsConnecting(false)
       setIsOpen(true)
-    }, 1500)
+    }, MEMOIR_CONNECTION_DELAY_MS)
 
     return () => clearTimeout(timer)
   }, [])
@@ -185,8 +192,8 @@ legally coincidental.`
             <div id="memoir-content" className="font-mono text-sm" ref={contentRef}>
               <HumanTypewriter
                 text={memoirText}
-                speed={30}
-                pauseProbability={0.1}
+                speed={HUMAN_TYPEWRITER_SPEED_MS}
+                pauseProbability={PAUSE_PROBABILITY}
                 scrollContainer={contentRef}
                 skipAnimation={skipAnimation}
               />
