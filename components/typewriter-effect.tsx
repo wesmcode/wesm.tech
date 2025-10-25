@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 type Props = {
   text: string
@@ -21,6 +21,7 @@ export default function TypewriterEffect({
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isComplete, setIsComplete] = useState(skipAnimation)
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+  const cursorRef = useRef<HTMLSpanElement>(null)
 
   // Check for reduced motion preference
   useEffect(() => {
@@ -50,6 +51,17 @@ export default function TypewriterEffect({
       const timeout = setTimeout(() => {
         setDisplayedText((prev) => prev + text[currentIndex])
         setCurrentIndex((prev) => prev + 1)
+
+        // Auto-scroll to keep cursor in view after a small delay
+        requestAnimationFrame(() => {
+          if (cursorRef.current) {
+            cursorRef.current.scrollIntoView({
+              behavior: 'smooth',
+              block: 'nearest',
+              inline: 'nearest'
+            })
+          }
+        })
       }, speed)
 
       return () => clearTimeout(timeout)
@@ -92,13 +104,13 @@ export default function TypewriterEffect({
 
   return (
     <div
-      className={`whitespace-pre-line ${className}`}
+      className={`whitespace-pre ${className}`}
       aria-live="polite"
       aria-atomic="false"
       role="status"
     >
       {displayedText}
-      {!isComplete && <span className="animate-pulse" aria-hidden="true">▋</span>}
+      {!isComplete && <span ref={cursorRef} className="animate-pulse" aria-hidden="true">▋</span>}
     </div>
   )
 }
