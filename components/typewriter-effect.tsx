@@ -35,6 +35,7 @@ export default function TypewriterEffect({
     }
   }, [])
 
+  // Main typing animation effect - handles all animation logic
   useEffect(() => {
     // If skipAnimation is true or user prefers reduced motion, immediately show the full text
     if (skipAnimation || prefersReducedMotion) {
@@ -65,15 +66,15 @@ export default function TypewriterEffect({
       }, speed)
 
       return () => clearTimeout(timeout)
-    } else {
+    } else if (!isComplete) {
       setIsComplete(true)
       if (onComplete) {
         onComplete()
       }
     }
-  }, [currentIndex, speed, text, onComplete, skipAnimation, prefersReducedMotion])
+  }, [currentIndex, speed, text, onComplete, skipAnimation, prefersReducedMotion, isComplete])
 
-  // Add effect to handle Enter key press
+  // Handle Enter key press to skip animation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Enter" && !isComplete) {
@@ -89,18 +90,6 @@ export default function TypewriterEffect({
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
   }, [text, isComplete, onComplete])
-
-  // Update when skipAnimation changes
-  useEffect(() => {
-    if (skipAnimation && !isComplete) {
-      setDisplayedText(text);
-      setCurrentIndex(text.length);
-      setIsComplete(true);
-      if (onComplete) {
-        onComplete();
-      }
-    }
-  }, [skipAnimation, isComplete, text, onComplete]);
 
   return (
     <div

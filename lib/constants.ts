@@ -13,6 +13,9 @@ export const MEMOIR_CONNECTION_DELAY_MS = 1500;
 export const DATETIME_UPDATE_INTERVAL_MS = 60000; // 1 minute
 export const TYPEWRITER_DEFAULT_SPEED_MS = 20;
 export const HUMAN_TYPEWRITER_SPEED_MS = 30;
+export const AUTO_SCROLL_DELAY_MS = 100;
+export const SKIP_ANIMATION_RESET_DELAY_MS = 100;
+export const CONTACT_INFO_LOAD_DELAY_MS = 500;
 
 // Touch targets (accessibility)
 export const MIN_TOUCH_TARGET_SIZE_PX = 48;

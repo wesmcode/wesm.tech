@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react"
 import TypewriterEffect from "../typewriter-effect"
 import { useIsMobile } from "@/hooks/use-mobile"
+import { CONTACT_INFO_LOAD_DELAY_MS } from "@/lib/constants"
 
 type Props = {
   onReturn: () => void
@@ -14,22 +15,12 @@ export default function ContactInfo({ onReturn, skipAnimation = false }: Props) 
   const sectionRef = useRef<HTMLDivElement>(null)
   const isMobile = useIsMobile()
 
-  // Handle 'r' key press
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key.toLowerCase() === "r") {
-        onReturn()
-      }
-    }
-
-    window.addEventListener("keydown", handleKeyDown)
-    return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [onReturn])
+  // Note: 'r' key press is handled globally in terminal.tsx to avoid conflicts
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowContent(true)
-    }, 500)
+    }, CONTACT_INFO_LOAD_DELAY_MS)
 
     return () => clearTimeout(timer)
   }, [])

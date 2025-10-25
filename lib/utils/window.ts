@@ -15,8 +15,9 @@ export function openInNewTab(url: string, fallbackMessage?: string): Window | nu
   if (newWindow) {
     newWindow.focus();
   } else if (fallbackMessage) {
-    // In a real app, this should be replaced with a toast notification
-    alert(fallbackMessage);
+    // TODO: Replace with modern toast notification system (e.g., react-hot-toast)
+    // Temporarily using console.warn instead of blocking alert()
+    console.warn(`Popup blocked: ${fallbackMessage}`);
   }
 
   return newWindow;

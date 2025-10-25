@@ -6,6 +6,7 @@ import { useTheme } from "next-themes"
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false)
   const [noirMode, setNoirMode] = useState(false)
+  const [isDark, setIsDark] = useState(false)
   const { theme, setTheme } = useTheme()
 
   // Wait for client-side hydration
@@ -18,6 +19,14 @@ export function ThemeToggle() {
       document.documentElement.classList.add("noir")
     }
   }, [])
+
+  // Update isDark when theme changes (client-side only)
+  useEffect(() => {
+    if (mounted) {
+      const darkMode = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
+      setIsDark(darkMode)
+    }
+  }, [theme, mounted])
 
   // Handle noir mode toggle
   const toggleNoirMode = () => {
@@ -37,8 +46,6 @@ export function ThemeToggle() {
   if (!mounted) {
     return null
   }
-
-  const isDark = theme === "dark" || (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches)
 
   return (
     <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 bg-gray-800 dark:bg-gray-900 p-3 rounded-lg shadow-lg border border-gray-600">

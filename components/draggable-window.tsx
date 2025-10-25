@@ -3,6 +3,8 @@
 import type React from "react"
 
 import { useState, useRef, type ReactNode, useEffect } from "react"
+import { useIsMobile } from "@/hooks/use-mobile"
+import { MOBILE_BREAKPOINT } from "@/lib/constants"
 
 interface DraggableWindowProps {
   children: ReactNode
@@ -10,6 +12,7 @@ interface DraggableWindowProps {
 }
 
 export default function DraggableWindow({ children, isFullscreen = false }: DraggableWindowProps) {
+  const isMobile = useIsMobile()
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
   const [size, setSize] = useState({ width: 800, height: 600 })
@@ -37,16 +40,13 @@ export default function DraggableWindow({ children, isFullscreen = false }: Drag
     boundaryRef.current = isAtBoundary
   }, [isAtBoundary])
 
-  // Now add this at beginning of component function, just after the state declarations
-  const isMobile = typeof window !== 'undefined' ? window.innerWidth < 768 : false;
-
-  // And update the initial centering useEffect to ensure mobile is fullscreen
+  // Initial centering and sizing on mount
   useEffect(() => {
     if (windowRef.current && typeof window !== "undefined") {
-      // Responsive sizing
-      const isMobile = window.innerWidth < 768
-      
-      if (isMobile) {
+      // Responsive sizing - use window width check for initial render
+      const isMobileWidth = window.innerWidth < MOBILE_BREAKPOINT
+
+      if (isMobileWidth) {
         // On mobile, make it fullscreen - use window.innerWidth directly
         setSize({ 
           width: window.innerWidth, 
@@ -65,10 +65,10 @@ export default function DraggableWindow({ children, isFullscreen = false }: Drag
         const y = (window.innerHeight - newHeight) / 4
         setPosition({ x, y })
       }
-      
-      setStartSize({ 
-        width: isMobile ? window.innerWidth : Math.min(window.innerWidth - 64, 800),
-        height: isMobile ? window.innerHeight : Math.min(window.innerHeight - 100, 600)
+
+      setStartSize({
+        width: isMobileWidth ? window.innerWidth : Math.min(window.innerWidth - 64, 800),
+        height: isMobileWidth ? window.innerHeight : Math.min(window.innerHeight - 100, 600)
       })
     }
   }, [])
@@ -230,9 +230,9 @@ export default function DraggableWindow({ children, isFullscreen = false }: Drag
   useEffect(() => {
     const handleResize = () => {
       if (typeof window !== "undefined") {
-        const isMobile = window.innerWidth < 768
-        
-        if (isMobile || isFullscreen) {
+        const isMobileWidth = window.innerWidth < MOBILE_BREAKPOINT
+
+        if (isMobileWidth || isFullscreen) {
           // For mobile or fullscreen, take up the entire viewport
           setSize({ 
             width: window.innerWidth, 
