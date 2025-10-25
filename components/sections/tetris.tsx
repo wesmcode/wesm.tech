@@ -407,7 +407,7 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
   const displayBoard = renderBoard()
 
   return (
-    <div className="tetris-game w-full">
+    <div className="tetris-game w-full h-full">
       {/* Mobile-only notice for desktop */}
       {!isMobile && (
         <div className="mb-4 p-4 border border-yellow-500 bg-yellow-900/20">
@@ -420,84 +420,84 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
         </div>
       )}
 
-      {/* Mobile Instructions */}
+      {/* Mobile Game */}
       {isMobile && (
-        <div className="mb-3 text-white">
-          <p className="text-yellow-300 mb-1 text-center">~ TETRIS - WESM.TECH Edition ~</p>
-          <p className="text-xs text-center text-gray-300">
-            ← → Move | ↑ Rotate | ↓ Drop
-          </p>
-        </div>
-      )}
-
-      {/* Game container */}
-      {isMobile && (
-        <div className="flex flex-col items-center gap-4">
-          {/* Score panel */}
-          <div className="w-full flex justify-between text-xs mb-2 px-1">
+        <div className="flex flex-col h-full">
+          {/* Score panel - TOP PRIORITY */}
+          <div className="w-full flex justify-between text-sm mb-2 px-2 py-2 bg-blue-800/50 border-b border-blue-600">
             <div>
-              <span className="text-yellow-300">Score:</span> {score}
+              <span className="text-yellow-300 font-bold">Score:</span> <span className="text-white font-bold">{score}</span>
             </div>
             <div>
-              <span className="text-yellow-300">Lines:</span> {lines}
+              <span className="text-yellow-300 font-bold">Lines:</span> <span className="text-white font-bold">{lines}</span>
             </div>
             <div>
-              <span className="text-yellow-300">Level:</span> {level}
+              <span className="text-yellow-300 font-bold">Level:</span> <span className="text-white font-bold">{level}</span>
             </div>
           </div>
 
-          {/* Game board and next piece - ASCII style */}
-          <div className="flex gap-3 items-start justify-center">
-            {/* Main game board - ASCII */}
-            <div className="flex flex-col font-mono text-xs leading-none" style={{ letterSpacing: '0' }}>
-              {displayBoard.map((row, y) => (
-                <div key={y} className="flex">
-                  {row.map((cell, x) => (
-                    <span
-                      key={`${y}-${x}`}
-                      style={{
-                        color: cell !== 0 ? getCellColor(cell as string) : '#1e3a5f',
-                      }}
-                    >
-                      {cell !== 0 ? '█' : '░'}
-                    </span>
-                  ))}
-                </div>
-              ))}
-            </div>
+          {/* Title and Instructions */}
+          <div className="mb-2 text-white px-2">
+            <p className="text-yellow-300 text-sm text-center font-bold">~ TETRIS - WESM.TECH ~</p>
+            <p className="text-xs text-center text-gray-300">
+              ← → Move | ↑ Rotate | ↓ Drop
+            </p>
+          </div>
 
-            {/* Next piece preview - ASCII */}
-            <div className="flex flex-col gap-1">
-              <div className="text-xs text-yellow-300 text-center">Next</div>
-              <div className="flex flex-col font-mono text-xs leading-none" style={{ letterSpacing: '0' }}>
-                {nextPiece.shape.map((row, y) => (
+          {/* Game board and next piece - ASCII style */}
+          <div className="flex-1 flex items-center justify-center">
+            <div className="flex gap-2 items-start">
+              {/* Main game board - ASCII - LARGER */}
+              <div className="flex flex-col font-mono text-base leading-none border-2 border-blue-600 p-1" style={{ letterSpacing: '0', backgroundColor: '#0f172a' }}>
+                {displayBoard.map((row, y) => (
                   <div key={y} className="flex">
                     {row.map((cell, x) => (
                       <span
-                        key={`next-${y}-${x}`}
+                        key={`${y}-${x}`}
                         style={{
-                          color: cell !== 0 ? nextPiece.color : '#0f172a',
+                          color: cell !== 0 ? getCellColor(cell as string) : '#1e3a5f',
                         }}
                       >
-                        {cell !== 0 ? '█' : ' '}
+                        {cell !== 0 ? '█' : '░'}
                       </span>
                     ))}
                   </div>
                 ))}
               </div>
+
+              {/* Next piece preview - ASCII */}
+              <div className="flex flex-col gap-1">
+                <div className="text-xs text-yellow-300 text-center font-bold">NEXT</div>
+                <div className="flex flex-col font-mono text-sm leading-none border border-blue-600 p-1" style={{ letterSpacing: '0', backgroundColor: '#0f172a' }}>
+                  {nextPiece.shape.map((row, y) => (
+                    <div key={y} className="flex">
+                      {row.map((cell, x) => (
+                        <span
+                          key={`next-${y}-${x}`}
+                          style={{
+                            color: cell !== 0 ? nextPiece.color : '#0f172a',
+                          }}
+                        >
+                          {cell !== 0 ? '█' : ' '}
+                        </span>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Game status */}
+          {/* Game status - Bottom */}
           {gameOver && (
-            <div className="mt-2 p-3 border border-red-500 bg-red-900/20">
+            <div className="mb-2 p-3 border border-red-500 bg-red-900/20 mx-2">
               <p className="text-red-300 text-center font-bold mb-1">GAME OVER!</p>
-              <p className="text-white text-center text-sm">Score: {score}</p>
+              <p className="text-white text-center text-sm">Final Score: {score}</p>
             </div>
           )}
 
           {isPaused && (
-            <div className="mt-2 p-3 border border-yellow-500 bg-yellow-900/20">
+            <div className="mb-2 p-3 border border-yellow-500 bg-yellow-900/20 mx-2">
               <p className="text-yellow-300 text-center font-bold">PAUSED</p>
             </div>
           )}
