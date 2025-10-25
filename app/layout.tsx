@@ -1,7 +1,13 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import './globals.css'
 import { ThemeProvider } from '@/components/theme-provider'
-import { ThemeToggle } from '@/components/theme-toggle'
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+}
 
 export const metadata: Metadata = {
   title: 'Wesley Melo | wesm.tech',
@@ -9,12 +15,6 @@ export const metadata: Metadata = {
   generator: 'Next.js',
   keywords: ['Wesley Melo', 'Product Manager', 'wesm.tech'],
   authors: [{ name: 'Wesley Melo', url: 'https://wesm.tech' }],
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 5,
-    userScalable: true,
-  },
   icons: {
     icon: [
       { url: '/favicon.ico' },
@@ -61,7 +61,6 @@ export default function RootLayout({
             Skip to main content
           </a>
           <main id="main-content">{children}</main>
-          <ThemeToggle />
         </ThemeProvider>
       </body>
     </html>
