@@ -10,9 +10,9 @@ type Props = {
   className?: string
 }
 
-export default function TypewriterEffect({ 
-  text, 
-  speed = 20, 
+export default function TypewriterEffect({
+  text,
+  speed = 20,
   onComplete,
   skipAnimation = false,
   className = ""
@@ -20,10 +20,23 @@ export default function TypewriterEffect({
   const [displayedText, setDisplayedText] = useState("")
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isComplete, setIsComplete] = useState(skipAnimation)
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false)
+
+  // Check for reduced motion preference
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+      setPrefersReducedMotion(mediaQuery.matches)
+
+      const handleChange = () => setPrefersReducedMotion(mediaQuery.matches)
+      mediaQuery.addEventListener('change', handleChange)
+      return () => mediaQuery.removeEventListener('change', handleChange)
+    }
+  }, [])
 
   useEffect(() => {
-    // If skipAnimation is true, immediately show the full text
-    if (skipAnimation) {
+    // If skipAnimation is true or user prefers reduced motion, immediately show the full text
+    if (skipAnimation || prefersReducedMotion) {
       setDisplayedText(text);
       setCurrentIndex(text.length);
       setIsComplete(true);
@@ -32,7 +45,7 @@ export default function TypewriterEffect({
       }
       return;
     }
-    
+
     if (currentIndex < text.length) {
       const timeout = setTimeout(() => {
         setDisplayedText((prev) => prev + text[currentIndex])
@@ -46,7 +59,7 @@ export default function TypewriterEffect({
         onComplete()
       }
     }
-  }, [currentIndex, speed, text, onComplete, skipAnimation])
+  }, [currentIndex, speed, text, onComplete, skipAnimation, prefersReducedMotion])
 
   // Add effect to handle Enter key press
   useEffect(() => {
@@ -78,9 +91,14 @@ export default function TypewriterEffect({
   }, [skipAnimation, isComplete, text, onComplete]);
 
   return (
-    <div className={`whitespace-pre-line ${className}`}>
+    <div
+      className={`whitespace-pre-line ${className}`}
+      aria-live="polite"
+      aria-atomic="false"
+      role="status"
+    >
       {displayedText}
-      {!isComplete && <span className="animate-pulse">▋</span>}
+      {!isComplete && <span className="animate-pulse" aria-hidden="true">▋</span>}
     </div>
   )
 }

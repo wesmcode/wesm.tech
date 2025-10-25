@@ -3,25 +3,69 @@
 import { useState, useEffect, useRef } from "react"
 import HumanTypewriter from "../human-typewriter"
 import { X } from "lucide-react"
+import { MEMOIR_CONNECTION_DELAY_MS, HUMAN_TYPEWRITER_SPEED_MS } from "@/lib/constants"
 
-type Props = {
+type MemoirProps = {
   onReturn: () => void
   skipAnimation?: boolean
 }
 
-export default function Memoir({ onReturn, skipAnimation = false }: Props) {
+const PAUSE_PROBABILITY = 0.1
+
+export default function Memoir({ onReturn, skipAnimation = false }: MemoirProps) {
+  // State
   const [isOpen, setIsOpen] = useState(false)
   const [isConnecting, setIsConnecting] = useState(true)
-  const contentRef = useRef<HTMLDivElement>(null)
 
+  // Refs
+  const contentRef = useRef<HTMLDivElement>(null)
+  const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const modalRef = useRef<HTMLDivElement>(null)
+
+  // Show modal after connection delay
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsConnecting(false)
       setIsOpen(true)
-    }, 1500)
+    }, MEMOIR_CONNECTION_DELAY_MS)
 
     return () => clearTimeout(timer)
   }, [])
+
+  // Focus management and focus trap
+  useEffect(() => {
+    if (isOpen && closeButtonRef.current) {
+      closeButtonRef.current.focus()
+    }
+
+    if (isOpen) {
+      // Trap focus within modal
+      const handleTabKey = (e: KeyboardEvent) => {
+        if (e.key === 'Tab' && modalRef.current) {
+          const focusableElements = modalRef.current.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          )
+          const firstElement = focusableElements[0] as HTMLElement
+          const lastElement = focusableElements[focusableElements.length - 1] as HTMLElement
+
+          if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault()
+            lastElement?.focus()
+          } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault()
+            firstElement?.focus()
+          }
+        }
+
+        if (e.key === 'Escape') {
+          onReturn()
+        }
+      }
+
+      document.addEventListener('keydown', handleTabKey)
+      return () => document.removeEventListener('keydown', handleTabKey)
+    }
+  }, [isOpen, onReturn])
 
   const memoirText = `
 .............................. Wesley, are YOU there?
@@ -120,27 +164,36 @@ legally coincidental.`
         <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-2 sm:p-4"
           onClick={() => onReturn()}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="memoir-title"
+          aria-describedby="memoir-content"
         >
           <div
             className="bg-white text-black p-3 sm:p-4 rounded-lg w-full max-w-[90vw] sm:max-w-2xl max-h-[80vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
-            ref={contentRef}
+            ref={modalRef}
           >
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center">
-                <div className="w-3 h-3 rounded-full bg-green-500 mr-2"></div>
-                <span className="text-sm text-gray-600">Live typing...</span>
+                <div className="w-3 h-3 rounded-full bg-green-500 mr-2" aria-hidden="true"></div>
+                <span id="memoir-title" className="text-sm text-gray-600">Live typing...</span>
               </div>
-              <button onClick={() => onReturn()} className="text-gray-500 hover:text-gray-700">
-                <X size={18} />
+              <button
+                ref={closeButtonRef}
+                onClick={() => onReturn()}
+                className="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded"
+                aria-label="Close memoir modal"
+              >
+                <X size={18} aria-hidden="true" />
               </button>
             </div>
 
-            <div className="font-mono text-sm">
+            <div id="memoir-content" className="font-mono text-sm" ref={contentRef}>
               <HumanTypewriter
                 text={memoirText}
-                speed={30}
-                pauseProbability={0.1}
+                speed={HUMAN_TYPEWRITER_SPEED_MS}
+                pauseProbability={PAUSE_PROBABILITY}
                 scrollContainer={contentRef}
                 skipAnimation={skipAnimation}
               />

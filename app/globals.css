@@ -76,13 +76,25 @@
 }
 
 /* Mobile optimizations */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   html, body {
     overflow: hidden;
     position: fixed;
     width: 100%;
     height: 100%;
     overscroll-behavior: none;
+  }
+
+  /* iOS safe area insets support */
+  @supports (padding: max(0px)) {
+    .terminal-content {
+      padding-top: max(8px, env(safe-area-inset-top)) !important;
+      padding-bottom: max(60px, env(safe-area-inset-bottom)) !important;
+    }
+
+    .mobile-controls {
+      padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+    }
   }
   
   /* Allow terminal content to scroll properly on mobile */
@@ -184,7 +196,7 @@ body {
 }
 
 /* Mobile responsiveness */
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .terminal-text {
     font-size: 12px;
   }
@@ -226,11 +238,32 @@ body {
   border-radius: 4px !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
   width: 3.5rem !important;
-  height: 2.5rem !important;
+  height: 3rem !important; /* Changed from 2.5rem to meet 48px minimum touch target */
+  transition: background-color 0.2s, transform 0.1s !important;
 }
 
 .mobile-control-button:active {
   background-color: #4a5568 !important;
   transform: translateY(1px) !important;
+}
+
+.mobile-control-button:focus-visible {
+  outline: 2px solid #fff !important;
+  outline-offset: 2px !important;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .mobile-control-button {
+    transition: none !important;
+  }
 }
 
