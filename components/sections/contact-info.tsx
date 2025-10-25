@@ -102,7 +102,7 @@ $ cat README.md
   const content = isMobile ? mobileContent : desktopContent
 
   return (
-    <div ref={sectionRef} className={isMobile ? "mb-24" : ""}>
+    <div ref={sectionRef} className={isMobile ? "mb-64" : ""}>
       {showContent ? (
         <>
           <TypewriterEffect
