@@ -102,12 +102,12 @@ $ cat README.md
   const content = isMobile ? mobileContent : desktopContent
 
   return (
-    <div ref={sectionRef}>
+    <div ref={sectionRef} className={isMobile ? "mb-24" : ""}>
       {showContent ? (
         <>
-          <TypewriterEffect 
-            text={content} 
-            speed={10} 
+          <TypewriterEffect
+            text={content}
+            speed={10}
             onComplete={scrollToBottom}
             skipAnimation={skipAnimation}
           />
