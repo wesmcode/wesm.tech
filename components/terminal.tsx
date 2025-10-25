@@ -9,21 +9,12 @@ import DraggableWindow from "./draggable-window"
 import { useIsMobile } from "@/hooks/use-mobile"
 import MobileNavControls from "./mobile-nav-controls"
 import TypewriterEffect from "./typewriter-effect"
-import { EXIT_COUNTDOWN_SECONDS, LINKEDIN_URL, RESUME_PDF_PATH, MOBILE_CONTROLS_HEIGHT_PX, SITE_VERSION, SITE_NAME, COPYRIGHT_YEAR, AUTHOR_NAME } from "@/lib/constants"
+import { EXIT_COUNTDOWN_SECONDS, LINKEDIN_URL, RESUME_PDF_PATH, MOBILE_CONTROLS_HEIGHT_PX, SITE_VERSION, SITE_NAME, COPYRIGHT_YEAR, AUTHOR_NAME, AUTO_SCROLL_DELAY_MS, SKIP_ANIMATION_RESET_DELAY_MS } from "@/lib/constants"
 import { openInNewTab } from "@/lib/utils/window"
 
 type Section = "menu" | "contact" | "memoir" | "resume" | "exit"
 
-const MENU_OPTIONS = [
-  { id: "contact" as const, label: "contact info" },
-  { id: "resume" as const, label: "open resume .pdf" },
-  { id: "memoir" as const, label: "live chat memoir" },
-  { id: "exit" as const, label: "exit" },
-]
-
 const RETURN_TO_MENU_KEY = "r"
-const AUTO_SCROLL_DELAY_MS = 100
-const SKIP_ANIMATION_RESET_DELAY_MS = 100
 
 export default function Terminal() {
   // State management
@@ -35,7 +26,6 @@ export default function Terminal() {
   const [typingStage, setTypingStage] = useState(0)
 
   // Refs
-  const terminalRef = useRef<HTMLDivElement>(null)
   const terminalContentRef = useRef<HTMLDivElement>(null)
 
   // Hooks
@@ -87,7 +77,7 @@ export default function Terminal() {
           top: terminalContentRef.current.scrollHeight,
           behavior: "smooth",
         })
-      }, 100)
+      }, AUTO_SCROLL_DELAY_MS)
     }
   }, [activeSection])
 
@@ -128,14 +118,15 @@ export default function Terminal() {
 
   const handleMobileDown = () => {
     if (activeSection === "menu") {
-      setMenuIndex((prev) => Math.min(MENU_OPTIONS.length - 1, prev + 1));
+      setMenuIndex((prev) => Math.min(3, prev + 1)); // 4 menu options (0-3)
     }
   }
 
   const handleMobileEnter = () => {
     if (activeSection === "menu") {
-      const selectedOption = MENU_OPTIONS[menuIndex].id;
-      handleMenuSelect(selectedOption);
+      // Menu options: contact, resume, memoir, exit (hardcoded to avoid duplication)
+      const menuOptions: Section[] = ["contact", "resume", "memoir", "exit"];
+      handleMenuSelect(menuOptions[menuIndex]);
     } else {
       // Skip the typewriter animation in non-menu sections
       setSkipTypewriter(true);
