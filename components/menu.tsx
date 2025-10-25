@@ -15,7 +15,7 @@ const MENU_OPTIONS: { id: MenuOption; label: string }[] = [
   { id: "contact", label: "contact info" },
   { id: "resume", label: "open resume .pdf" },
   { id: "memoir", label: "live chat memoir" },
-  { id: "tetris", label: "play tetris" },
+  { id: "tetris", label: "play" },
   { id: "exit", label: "exit" },
 ]
 
