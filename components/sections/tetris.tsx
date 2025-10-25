@@ -14,7 +14,7 @@ type TetrisProps = {
 }
 
 // Game constants
-const BOARD_WIDTH = 10
+const BOARD_WIDTH = 12
 const BOARD_HEIGHT = 20
 const INITIAL_DROP_SPEED = 600
 const MIN_DROP_SPEED = 80
@@ -490,15 +490,24 @@ export default function Tetris({ onReturn, skipAnimation = false }: TetrisProps)
 
           {/* Game status - Bottom */}
           {gameOver && (
-            <div className="mb-2 p-3 border border-red-500 bg-red-900/20 mx-2">
-              <p className="text-red-300 text-center font-bold mb-1">GAME OVER!</p>
-              <p className="text-white text-center text-sm">Final Score: {score}</p>
+            <div className="mb-2 p-4 border-2 border-red-500 bg-red-900/30 mx-2 rounded">
+              <p className="text-red-400 text-center font-bold text-lg mb-2">~ GAME OVER ~</p>
+              <div className="text-center space-y-1">
+                <p className="text-white text-base">
+                  <span className="text-yellow-300 font-bold">Final Score:</span> <span className="text-white font-bold text-lg">{score}</span>
+                </p>
+                <p className="text-gray-300 text-sm">
+                  <span className="text-yellow-300">Lines:</span> {lines} | <span className="text-yellow-300">Level:</span> {level}
+                </p>
+              </div>
+              <p className="text-gray-400 text-xs text-center mt-2">Press R to return to menu</p>
             </div>
           )}
 
           {isPaused && (
-            <div className="mb-2 p-3 border border-yellow-500 bg-yellow-900/20 mx-2">
-              <p className="text-yellow-300 text-center font-bold">PAUSED</p>
+            <div className="mb-2 p-3 border-2 border-yellow-500 bg-yellow-900/30 mx-2 rounded">
+              <p className="text-yellow-300 text-center font-bold text-lg">~ PAUSED ~</p>
+              <p className="text-gray-400 text-xs text-center mt-1">Press P to resume</p>
             </div>
           )}
         </div>
